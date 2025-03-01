@@ -36,6 +36,8 @@ const createInterview = async (req, res) => {
 
     await interview.save();
 
+    console.log(interview);
+
     res.status(201).json({
       success: true,
       message: "Interview created successfully!",

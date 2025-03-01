@@ -10,26 +10,25 @@ import { chatSession } from "../../../utils/GeminiAI";
 import { LoaderCircle } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { createInterview } from "../../../services/operations/Interview";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { addQuestions } from "../../store/slice/interviewSlice";
 
 const AddNewInterview = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [jobRole, setJobRole] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [jobExperience, setJobExperience] = useState("");
   const [loading, setLoading] = useState(false);
-  const [jsonResponse, setJsonResponse] = useState(null); // Store the parsed response
+  const [jsonResponse, setJsonResponse] = useState(null);
 
   const { user } = useUser();
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log("Job Role:", jobRole);
-    console.log("Job Description:", jobDescription);
-    console.log("Years of Experience:", jobExperience);
-
     const QuestionCount = process.env.NEXT_PUBLIC_QUESTION_COUNT;
-    console.log("Question Count from env:", QuestionCount);
-
     setLoading(true);
 
     const InputPrompt = `Job Position: ${jobRole}, Job Description: ${jobDescription}, Years of Experience: ${jobExperience}. Based on the provided job role, description, and years of experience, please generate ${QuestionCount} interview question alongside its answers in json format`;
@@ -41,11 +40,11 @@ const AddNewInterview = () => {
         .replace("```json", "")
         .replace("```", "");
 
-      const parsedResponse = JSON.parse(MockJsonResp); // Parse the JSON response
-      setJsonResponse(parsedResponse); // Now, set it after parsing
+      const parsedResponse = JSON.parse(MockJsonResp);
+      setJsonResponse(parsedResponse);
 
       const createInterviewResponse = await createInterview({
-        jsonMockResp: parsedResponse, // Use parsed response here
+        jsonMockResp: parsedResponse,
         jobPosition: jobRole,
         jobDescription: jobDescription,
         jobExperience: jobExperience,
@@ -53,7 +52,9 @@ const AddNewInterview = () => {
       });
 
       if (createInterviewResponse.success) {
+        dispatch(addQuestions(createInterviewResponse.data?.jsonMockResp));
         setOpen(false);
+        router.push("/dashboard/interview");
       }
 
       console.log(createInterviewResponse);

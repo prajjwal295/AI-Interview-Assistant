@@ -2,8 +2,6 @@ const mongoose = require("mongoose");
 
 require("dotenv").config();
 
-console.log(process.env.DATABASE_URL);
-
 exports.dbConnect = () => {
   mongoose
     .connect(process.env.DATABASE_URL)
