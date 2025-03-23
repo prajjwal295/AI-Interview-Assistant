@@ -13,7 +13,9 @@ const interviewSlice = createSlice({
       state.questions = actions.payload;
     },
     addAnswers: (state, actions) => {
-      state.answers = actions.payload;
+      const { index, answer } = actions.payload;
+      if (!state.answers) state.answers = {};
+      state.answers[index] = answer;
     },
     resetInterview: (state) => {
       state.questions = null;

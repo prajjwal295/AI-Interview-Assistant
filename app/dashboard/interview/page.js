@@ -2,15 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-import QuestionTab from "../_components/QuestionTab";
-import VideoRecorder from "../_components/VideoRecorder"; // ✅ Import VideoRecorder
+import { useDispatch, useSelector } from "react-redux";
+import useSpeechToText from "react-hook-speech-to-text";
+import Webcam from "react-webcam";
+import { addAnswers } from "../../store/slice/interviewSlice";
 
 const InterviewPage = () => {
   const router = useRouter();
-  const { questions } = useSelector((store) => store.interview);
+  const dispatch = useDispatch();
+  const { questions, answers } = useSelector((store) => store.interview);
   const [isActive, setIsActive] = useState(0);
-  const [transcript, setTranscript] = useState("");
+  const [finalTranscript, setFinalTranscript] = useState("");
 
   useEffect(() => {
     if (!questions) {
@@ -20,44 +22,113 @@ const InterviewPage = () => {
 
   if (!questions) return null;
 
+  const {
+    error,
+    interimResult,
+    isRecording,
+    results,
+    startSpeechToText,
+    stopSpeechToText,
+  } = useSpeechToText({
+    continuous: true,
+    useLegacyResults: false,
+  });
+
+  const handleStopRecording = () => {
+    stopSpeechToText();
+    const transcriptText = results?.join(" ") || "";
+    setFinalTranscript(transcriptText);
+    dispatch(addAnswers({ index: isActive, answer: transcriptText }));
+  };
+
+  const handleSave = () => {
+    // const firstUnansweredIndex = questions.findIndex(
+    //   (_, index) => !answers[index]
+    // );
+    // if (firstUnansweredIndex !== -1) {
+    //   setIsActive(firstUnansweredIndex);
+    // } else {
+      // console.log("All responses saved:", answers);
+    // }
+    const saveAnswer = await addAnswers(answers);
+
+  };
+
+  if (error)
+    return (
+      <p className="text-red-600 text-center">
+        Web Speech API is not available in this browser 🤷‍♂️
+      </p>
+    );
+
   return (
-    <div className="flex flex-col h-screen p-4">
-      <div className="flex flex-wrap gap-2 mb-4">
-        {questions.map((q, index) => (
-          <div
-            key={index}
-            onClick={() => setIsActive(index)}
-            className={`px-4 py-2 rounded-full text-sm font-medium cursor-pointer transition-all duration-200 ${
-              isActive === index
-                ? "bg-blue-600 text-white shadow-md"
-                : "bg-gray-200 hover:bg-gray-300"
-            }`}
-          >
-            {q.question.slice(0, 20)}...
-          </div>
-        ))}
-      </div>
-
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow">
-        {/* Question Display */}
-        <div className="p-6 border rounded-lg bg-white shadow-md">
-          <h2 className="text-lg font-semibold text-gray-800">
+    <div className="flex flex-col lg:flex-row h-screen p-6 gap-6 bg-gray-100 dark:bg-gray-900">
+      {/* Questions Panel */}
+      <div className="flex flex-col w-full lg:w-1/2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl shadow-lg p-5">
+        <div className="flex flex-wrap gap-3 mb-6 overflow-x-auto">
+          {questions.map((q, index) => {
+            const isAnswered = answers && answers[index] !== undefined;
+            return (
+              <button
+                key={index}
+                onClick={() => setIsActive(index)}
+                className={`px-5 py-2 rounded-full text-sm font-medium cursor-pointer transition-all duration-300 shadow-md 
+                ${
+                  isAnswered
+                    ? "bg-green-600 text-white shadow-lg scale-105 hover:bg-green-700"
+                    : isActive === index
+                    ? "bg-blue-600 text-white shadow-lg scale-105 hover:bg-blue-700"
+                    : "bg-gray-300 text-gray-800 hover:bg-gray-400 dark:bg-gray-700 dark:text-white"
+                }`}
+              >
+                {q.question.slice(0, 20)}...
+                {isAnswered && <span className="ml-2">✔</span>}
+              </button>
+            );
+          })}
+        </div>
+        <div className="p-4">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             Question {isActive + 1}
           </h2>
-          <p className="text-gray-700 mt-2">{questions[isActive].question}</p>
+          <p className="text-gray-700 dark:text-gray-300 mt-3 leading-relaxed">
+            {questions[isActive].question}
+          </p>
+        </div>
+      </div>
+
+      {/* Answer Recording Section */}
+      <div className="w-full lg:w-2/5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl shadow-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
+          Record Your Response
+        </h3>
+
+        <div className="relative flex flex-col justify-center items-center bg-gray-200 dark:bg-gray-700 p-5 rounded-lg shadow-md">
+          <Webcam
+            mirrored={true}
+            className="bg-black rounded-xl"
+            style={{ height: 300, width: "100%", zIndex: 10 }}
+          />
         </div>
 
-        <div className="flex flex-col items-center p-6 bg-gray-200 border rounded-lg shadow-md">
-          <VideoRecorder onTranscript={(text) => setTranscript(text)} />
-
-          {/* Live Transcript */}
-          {transcript && (
-            <div className="mt-4 p-3 bg-white border rounded-md shadow-sm w-full max-w-lg">
-              <h3 className="font-medium text-gray-800">Live Transcript:</h3>
-              <p className="text-gray-600">{transcript}</p>
-            </div>
-          )}
+        <div className="mt-4 flex flex-col items-center gap-3">
+          <button
+            onClick={isRecording ? handleStopRecording : startSpeechToText}
+            className={`px-5 py-2 w-full text-white rounded-lg shadow-md transition-all duration-300 text-lg font-semibold
+            ${
+              isRecording
+                ? "bg-red-600 hover:bg-red-700 scale-105 shadow-lg"
+                : "bg-green-600 hover:bg-green-700 scale-105 shadow-lg"
+            }`}
+          >
+            {isRecording ? "Stop Recording" : "Start Recording"}
+          </button>
+          <button
+            onClick={handleSave}
+            className="px-5 py-2 w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition-all duration-300 text-lg font-semibold"
+          >
+            Save & Finish
+          </button>
         </div>
       </div>
     </div>
