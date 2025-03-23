@@ -10,6 +10,7 @@ const {
 router.post("/create", createInterview);
 
 // Fetch all interviews
+// hi there
 router.get("/all", fetchAllInterviews);
 
 // Fetch interviews by createdBy
