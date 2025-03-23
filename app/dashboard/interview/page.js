@@ -50,7 +50,7 @@ const InterviewPage = () => {
     // } else {
       // console.log("All responses saved:", answers);
     // }
-    const saveAnswer = await addAnswers(answers);
+    // const saveAnswer = await addAnswers(answers);
 
   };
 

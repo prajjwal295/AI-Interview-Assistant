@@ -12,59 +12,59 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false); // State for mobile menu toggle
 
   return (
-    <header className="p-4 bg-secondary shadow-md">
-      <div className="container mx-auto flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/">
-          <Image src="/logo.svg" width={80} height={20} alt="logo" />
-        </Link>
-
-        {/* Desktop Menu */}
-        <nav className="hidden md:flex gap-6">
-          {["dashboard", "questions", "upgrade", "hiw"].map((item) => (
-            <Link
-              key={item}
-              href={`/${item}`}
-              className={`hover:text-primary hover:font-bold transition-all ${
-                path === `/${item}` ? "text-primary font-bold" : ""
-              }`}
-            >
-              {item.charAt(0).toUpperCase() + item.slice(1)}{" "}
-              {/* Capitalize text */}
-            </Link>
+    <header className="relative p-1 bg-black shadow-lg border-b border-neon-blue">
+    <div className="container mx-auto flex items-center justify-between">
+      {/* Logo */}
+      <Link href="/" className="flex items-center gap-2">
+        <Image src="/logo.svg" width={80} height={30} alt="logo" className="transition-transform duration-300 hover:scale-110" />
+      </Link>
+  
+      {/* Desktop Menu */}
+      <nav className="hidden md:flex gap-8 text-lg">
+        {['dashboard', 'questions', 'upgrade', 'hiw'].map((item) => (
+          <Link
+            key={item}
+            href={`/${item}`}
+            className={`relative text-gray-300 hover:text-neon-blue transition-all duration-300 font-medium tracking-wide uppercase ${
+              path === `/${item}` ? 'text-neon-blue font-bold' : ''
+            }`}
+          >
+            {item.charAt(0).toUpperCase() + item.slice(1)}
+            <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-neon-blue transition-all duration-300 group-hover:w-full" />
+          </Link>
+        ))}
+      </nav>
+  
+      {/* User Button */}
+      <UserButton />
+  
+      {/* Mobile Menu Button */}
+      <button className="md:hidden p-4 rounded-md border border-neon-blue hover:bg-neon-blue/20 transition-all" onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? <X size={24} className="text-neon-blue" /> : <Menu size={24} className="text-neon-blue" />}
+      </button>
+    </div>
+  
+    {/* Mobile Menu */}
+    {isOpen && (
+      <nav className="md:hidden mt-4 bg-black p-4 rounded-lg shadow-lg border border-neon-blue animate-fadeIn">
+        <ul className="flex flex-col gap-4">
+          {['dashboard', 'questions', 'upgrade', 'hiw'].map((item) => (
+            <li key={item} className="border-b border-gray-700 pb-2 last:border-none">
+              <Link
+                href={`/${item}`}
+                className={`block w-full text-center text-gray-300 hover:text-neon-blue transition-all duration-300 font-semibold ${
+                  path === `/${item}` ? 'text-neon-blue font-bold' : ''
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                {item.charAt(0).toUpperCase() + item.slice(1)}
+              </Link>
+            </li>
           ))}
-        </nav>
-
-        {/* User Button */}
-        <UserButton />
-
-        {/* Mobile Menu Button */}
-        <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <nav className="md:hidden mt-4 bg-secondary p-4 rounded-lg">
-          <ul className="flex flex-col gap-3">
-            {["dashboard", "questions", "upgrade", "hiw"].map((item) => (
-              <li key={item} className="border-b border-gray-700 pb-2">
-                <Link
-                  href={`/${item}`}
-                  className={`block w-full text-center ${
-                    path === `/${item}` ? "text-primary font-bold" : ""
-                  }`}
-                  onClick={() => setIsOpen(false)} // Close menu on click
-                >
-                  {item.charAt(0).toUpperCase() + item.slice(1)}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
-    </header>
+        </ul>
+      </nav>
+    )}
+  </header>
   );
 };
 

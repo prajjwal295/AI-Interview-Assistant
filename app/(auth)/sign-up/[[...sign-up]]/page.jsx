@@ -70,7 +70,6 @@ export default function Page() {
             quibusdam aperiam voluptatum.
           </p>
         </div>
-
       <SignUp/>
       </div>
     </main>
