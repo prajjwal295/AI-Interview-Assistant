@@ -13,7 +13,7 @@ const VideoRecorder = ({ onTranscript }) => {
 
   let recognition = null;
 
-  const recognitionRef = useRef(null); // Store recognition instance
+  const recognitionRef = useRef(null); 
 
   const startRecording = async () => {
     try {

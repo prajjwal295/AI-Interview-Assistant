@@ -20,6 +20,11 @@ const InterviewPage = () => {
     }
   }, [questions, router]);
 
+  useEffect(() => {
+    handleStopRecording();
+    setFinalTranscript("");
+  }, [isActive]);
+
   if (!questions) return null;
 
   const {
@@ -48,18 +53,10 @@ const InterviewPage = () => {
     // if (firstUnansweredIndex !== -1) {
     //   setIsActive(firstUnansweredIndex);
     // } else {
-      // console.log("All responses saved:", answers);
+    // console.log("All responses saved:", answers);
     // }
     // const saveAnswer = await addAnswers(answers);
-
   };
-
-  if (error)
-    return (
-      <p className="text-red-600 text-center">
-        Web Speech API is not available in this browser 🤷‍♂️
-      </p>
-    );
 
   return (
     <div className="flex flex-col lg:flex-row h-screen p-6 gap-6 bg-gray-100 dark:bg-gray-900">
