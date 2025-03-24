@@ -52,6 +52,35 @@ const createInterview = async (req, res) => {
   }
 };
 
+const updateInterview = async (req, res) => {
+  console.log(req);
+  try {
+    const { answers, id } = req.body;
+
+    if (!id || !answers) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const interviewRecord = await Interview.findOneAndUpdate(
+      { mockId: id },
+      { UserAnswer: answers },
+      { new: true }
+    ).exec();
+
+    if (!interviewRecord) {
+      return res.status(404).json({ error: "Interview record not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Interview updated successfully", interviewRecord });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
 // Fetch All Interviews Controller
 const fetchAllInterviews = async (req, res) => {
   try {
@@ -110,4 +139,5 @@ module.exports = {
   createInterview,
   fetchAllInterviews,
   fetchInterviewsByUser,
+  updateInterview,
 };

@@ -54,7 +54,9 @@ const AddNewInterview = () => {
       if (createInterviewResponse.success) {
         dispatch(addQuestions(createInterviewResponse.data?.jsonMockResp));
         setOpen(false);
-        router.push("/dashboard/interview");
+        router.push(
+          `/dashboard/interview/${createInterviewResponse.data?.mockId}`
+        );
       }
 
       console.log(createInterviewResponse);

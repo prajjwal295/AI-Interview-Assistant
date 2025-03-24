@@ -1,19 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import useSpeechToText from "react-hook-speech-to-text";
 import Webcam from "react-webcam";
-import { addAnswers } from "../../store/slice/interviewSlice";
+import { addAnswers } from "../../../store/slice/interviewSlice";
+import { updateInterview } from "../../../../services/operations/Interview";
 
-const InterviewPage = () => {
+const InterviewPage = ({ params }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { questions, answers } = useSelector((store) => store.interview);
   const [isActive, setIsActive] = useState(0);
   const [finalTranscript, setFinalTranscript] = useState("");
-
+  const { id } = params;
   useEffect(() => {
     if (!questions) {
       router.push("/dashboard");
@@ -21,8 +22,11 @@ const InterviewPage = () => {
   }, [questions, router]);
 
   useEffect(() => {
-    handleStopRecording();
-    setFinalTranscript("");
+    return () => {
+      handleStopRecording();
+      setFinalTranscript("");
+      setResults([]);
+    };
   }, [isActive]);
 
   if (!questions) return null;
@@ -32,6 +36,7 @@ const InterviewPage = () => {
     interimResult,
     isRecording,
     results,
+    setResults,
     startSpeechToText,
     stopSpeechToText,
   } = useSpeechToText({
@@ -41,21 +46,24 @@ const InterviewPage = () => {
 
   const handleStopRecording = () => {
     stopSpeechToText();
-    const transcriptText = results?.join(" ") || "";
+    console.log(results);
+    const transcriptText = results?.[0]?.transcript?.join(" ") || "";
     setFinalTranscript(transcriptText);
     dispatch(addAnswers({ index: isActive, answer: transcriptText }));
   };
 
-  const handleSave = () => {
-    // const firstUnansweredIndex = questions.findIndex(
-    //   (_, index) => !answers[index]
-    // );
-    // if (firstUnansweredIndex !== -1) {
-    //   setIsActive(firstUnansweredIndex);
-    // } else {
-    // console.log("All responses saved:", answers);
-    // }
-    // const saveAnswer = await addAnswers(answers);
+  const handleSave = async () => {
+    console.log(JSON.stringify(answers, null, 2));
+    const firstUnansweredIndex = questions.findIndex(
+      (_, index) => !answers[index]
+    );
+    if (firstUnansweredIndex !== -1) {
+      setIsActive(firstUnansweredIndex);
+    } else {
+      console.log("All responses saved:", answers);
+      const saveAnswer = await updateInterview({ answers, id });
+      console.log(saveAnswer);
+    }
   };
 
   return (

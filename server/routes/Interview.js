@@ -4,6 +4,7 @@ const {
   createInterview,
   fetchAllInterviews,
   fetchInterviewsByUser,
+  updateInterview,
 } = require("../controllers/Interview");
 
 // Create an interview
@@ -15,5 +16,7 @@ router.get("/all", fetchAllInterviews);
 
 // Fetch interviews by createdBy
 router.get("/user/:createdBy", fetchInterviewsByUser);
+
+router.put("/update", updateInterview);
 
 module.exports = router;
