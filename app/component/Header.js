@@ -17,8 +17,8 @@ const Header = () => {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/logo.svg"
-            width={80}
+            src="/l1.png"
+            width={200}
             height={30}
             alt="logo"
             className="transition-transform duration-300 hover:scale-110"
