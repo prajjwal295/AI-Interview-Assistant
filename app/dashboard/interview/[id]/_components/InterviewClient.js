@@ -6,34 +6,50 @@ import { useDispatch, useSelector } from "react-redux";
 import useSpeechToText from "react-hook-speech-to-text";
 import Webcam from "react-webcam";
 import { addAnswers } from "../../../../store/slice/interviewSlice";
-import { updateInterview } from "../../../../../services/operations/Interview";
+import {
+  updateInterview,
+  fetchInterviewById,
+} from "../../../../../services/operations/Interview";
 
 const InterviewClient = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { questions, answers } = useSelector((store) => store.interview);
+  const { answers } = useSelector((store) => store.interview);
   const [isActive, setIsActive] = useState(0);
+  const [questions, setQuestions] = useState([]);
   const [finalTranscript, setFinalTranscript] = useState("");
   const params = useParams();
   const { id } = params;
 
-  // useEffect(() => {
-  //   const data = await fetchInterviewDetails(id);
+  useEffect(() => {
+    if (id) {
+      fetchInterviewDetails(id);
+    }
+  }, [id]);
 
-  //   if(!questions)
-  //   {
-  //     questions = data?.data.question
-  //   }
-  // }, [id]);
+  const fetchInterviewDetails = async (id) => {
+    const data = await fetchInterviewById({ mockId: id });
+    const qList = data?.data?.jsonMockResp?.map((res) => res.question);
+    const aList = data?.data?.userAnswers;
+    setQuestions(qList);
 
-  // useEffect(() => {
-  //   //handleStopRecording();
-  //   setFinalTranscript("");
-  //   // setResults([]);
-  // }, [isActive]);
+    aList?.map((answerSet) => {
+      var idx = answerSet[0];
+      var answer = answerSet[1];
 
-  if (!questions) return null;
+      dispatch(addAnswers({ index: idx, answer: answer }));
+    });
+  };
+
+  useEffect(() => {
+    clearResponse();
+  }, [isActive]);
+
+  const clearResponse = () => {
+    setFinalTranscript("");
+    setResults([]);
+  };
 
   const {
     error,
@@ -49,29 +65,43 @@ const InterviewClient = () => {
   });
 
   const handleStopRecording = () => {
-    stopSpeechToText();
-    const transcriptText = results?.[0]?.transcript?.join(" ") || "";
-    setFinalTranscript(transcriptText);
-    dispatch(addAnswers({ index: isActive, answer: transcriptText }));
+    setTimeout(() => {
+      stopSpeechToText();
+      console.log(results);
+      const transcriptText = results?.map((r) => r?.transcript).join(" ") || "";
+      if (transcriptText === "") {
+        return;
+      }
+      setFinalTranscript(transcriptText);
+      dispatch(addAnswers({ index: isActive, answer: transcriptText }));
+    }, 2000);
+  };
+
+  const handleStartRecording = () => {
+    setResults([]);
+    setFinalTranscript("");
+    startSpeechToText();
   };
 
   const handleSave = async () => {
-    console.log(JSON.stringify(answers, null, 2));
     const firstUnansweredIndex = questions.findIndex(
       (_, index) => !answers[index]
     );
     if (firstUnansweredIndex !== -1) {
       setIsActive(firstUnansweredIndex);
     } else {
-      console.log("All responses saved:", answers);
-      const saveAnswer = await updateInterview({ answers, id });
+      const answerArray = Object.entries(answers).map(([key, value]) => ({
+        id: Number(key),
+        answer: value,
+      }));
+      console.log(answerArray);
+      const saveAnswer = await updateInterview({ answers: answerArray, id });
       console.log(saveAnswer);
     }
   };
 
   return (
     <div className="flex flex-col lg:flex-row h-screen p-6 gap-6 bg-gray-100 dark:bg-gray-900">
-      {/* Questions Panel */}
       <div className="flex flex-col w-full lg:w-1/2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl shadow-lg p-5">
         <div className="flex flex-wrap gap-3 mb-6 overflow-x-auto">
           {questions.map((q, index) => {
@@ -89,7 +119,7 @@ const InterviewClient = () => {
                     : "bg-gray-300 text-gray-800 hover:bg-gray-400 dark:bg-gray-700 dark:text-white"
                 }`}
               >
-                {q.question.slice(0, 20)}...
+                {q.slice(0, 20)}...
                 {isAnswered && <span className="ml-2">✔</span>}
               </button>
             );
@@ -100,8 +130,20 @@ const InterviewClient = () => {
             Question {isActive + 1}
           </h2>
           <p className="text-gray-700 dark:text-gray-300 mt-3 leading-relaxed">
-            {questions[isActive].question}
+            {questions[isActive]}
           </p>
+
+          <p className="text-gray-700 dark:text-gray-300 mt-3 leading-relaxed border-1">
+            {finalTranscript}
+          </p>
+
+          <button
+            onClick={() => {
+              clearResponse();
+            }}
+          >
+            clear
+          </button>
         </div>
       </div>
 
@@ -121,7 +163,7 @@ const InterviewClient = () => {
 
         <div className="mt-4 flex flex-col items-center gap-3">
           <button
-            onClick={isRecording ? handleStopRecording : startSpeechToText}
+            onClick={isRecording ? handleStopRecording : handleStartRecording}
             className={`px-5 py-2 w-full text-white rounded-lg shadow-md transition-all duration-300 text-lg font-semibold
             ${
               isRecording

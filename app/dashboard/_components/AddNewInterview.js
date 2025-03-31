@@ -22,7 +22,6 @@ const AddNewInterview = () => {
   const [jobDescription, setJobDescription] = useState("");
   const [jobExperience, setJobExperience] = useState("");
   const [loading, setLoading] = useState(false);
-  const [jsonResponse, setJsonResponse] = useState(null);
 
   const { user } = useUser();
 
@@ -41,7 +40,6 @@ const AddNewInterview = () => {
         .replace("```", "");
 
       const parsedResponse = JSON.parse(MockJsonResp);
-      setJsonResponse(parsedResponse);
 
       const createInterviewResponse = await createInterview({
         jsonMockResp: parsedResponse,
@@ -58,8 +56,6 @@ const AddNewInterview = () => {
           `/dashboard/interview/${createInterviewResponse.data?.mockId}`
         );
       }
-
-      console.log(createInterviewResponse);
     } catch (error) {
       console.error("Error during the submission:", error);
     } finally {
@@ -70,10 +66,10 @@ const AddNewInterview = () => {
   return (
     <div>
       <div
-        className="p-2 border rounded-lg bg-secondary hover:scale-105 hover:shadow-lg hover:cursor-pointer transition-all"
+        className="p-3 border rounded-lg bg-white text-gray-900 font-semibold shadow-md transition-all transform hover:scale-105 hover:shadow-lg cursor-pointer"
         onClick={() => setOpen(true)}
       >
-        <h2 className="font-bold text-lg text-center">+ Add New</h2>
+        <h2 className="text-center">+ Add New</h2>
       </div>
 
       <Dialog
@@ -81,94 +77,97 @@ const AddNewInterview = () => {
         onClose={() => setOpen(false)}
         className="relative z-10"
       >
-        <DialogBackdrop className="fixed inset-0 bg-gray-500/75 opacity-50 transition-opacity" />
+        <DialogBackdrop className="fixed inset-0 bg-black/70 opacity-75 transition-opacity" />
         <form onSubmit={onSubmit}>
-          <div className="fixed inset-0 z-10 flex items-center justify-center p-6 text-center">
-            <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-3xl">
-              <div className="bg-white px-6 pb-6 pt-5 sm:p-8 sm:pb-8">
-                <DialogTitle className="font-bold text-xl text-gray-900 mb-4">
-                  Tell us more about your job interview
-                </DialogTitle>
+          <div className="fixed inset-0 z-10 flex items-center justify-center p-6">
+            <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-3xl p-6">
+              <DialogTitle className="text-2xl font-bold text-gray-900 mb-4 text-center">
+                Job Interview Details
+              </DialogTitle>
 
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="job_role"
-                      className="block text-sm font-medium text-gray-900"
-                    >
-                      Job Role / Job Position
-                    </label>
-                    <input
-                      type="text"
-                      id="job_role"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
-                      placeholder="Ex. Full Stack Developer"
-                      required
-                      value={jobRole}
-                      onChange={(e) => setJobRole(e.target.value)}
-                    />
-                  </div>
+              <div className="space-y-4">
+                {/* Job Role */}
+                <div>
+                  <label
+                    htmlFor="job_role"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Job Role / Position
+                  </label>
+                  <input
+                    type="text"
+                    id="job_role"
+                    className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-900 focus:ring-2 focus:ring-black focus:outline-none transition-all"
+                    placeholder="Ex. Full Stack Developer"
+                    required
+                    value={jobRole}
+                    onChange={(e) => setJobRole(e.target.value)}
+                  />
+                </div>
 
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="job_description"
-                      className="block text-sm font-medium text-gray-900"
-                    >
-                      Job Description / Tech Stack (In Short)
-                    </label>
-                    <textarea
-                      id="job_description"
-                      rows="4"
-                      className="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Ex. React, NodeJs"
-                      required
-                      value={jobDescription}
-                      onChange={(e) => setJobDescription(e.target.value)}
-                    ></textarea>
-                  </div>
+                {/* Job Description */}
+                <div>
+                  <label
+                    htmlFor="job_description"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Job Description / Tech Stack
+                  </label>
+                  <textarea
+                    id="job_description"
+                    rows="4"
+                    className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-900 focus:ring-2 focus:ring-black focus:outline-none transition-all"
+                    placeholder="Ex. React, Node.js, MongoDB"
+                    required
+                    value={jobDescription}
+                    onChange={(e) => setJobDescription(e.target.value)}
+                  ></textarea>
+                </div>
 
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="years_experience"
-                      className="block text-sm font-medium text-gray-900"
-                    >
-                      Years of Experience
-                    </label>
-                    <input
-                      type="number"
-                      id="years_experience"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
-                      placeholder="Ex. 5"
-                      max={50}
-                      required
-                      value={jobExperience}
-                      onChange={(e) => setJobExperience(e.target.value)}
-                    />
-                  </div>
+                {/* Years of Experience */}
+                <div>
+                  <label
+                    htmlFor="years_experience"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Years of Experience
+                  </label>
+                  <input
+                    type="number"
+                    id="years_experience"
+                    className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-900 focus:ring-2 focus:ring-black focus:outline-none transition-all"
+                    placeholder="Ex. 5"
+                    max={50}
+                    required
+                    value={jobExperience}
+                    onChange={(e) => setJobExperience(e.target.value)}
+                  />
                 </div>
               </div>
 
-              <div className="bg-gray-50 px-6 py-4 sm:flex sm:flex-row-reverse sm:px-8">
+              {/* Action Buttons */}
+              <div className="mt-6 flex justify-end space-x-4">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="px-4 py-3 text-sm font-medium text-gray-700 border border-gray-300 rounded-md bg-white hover:bg-gray-100 transition-all"
+                >
+                  Cancel
+                </button>
+
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex w-full justify-center rounded-md bg-blue-600 px-4 py-3 text-sm font-medium text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+                  className="px-5 py-3 text-sm font-medium text-white bg-black rounded-md hover:bg-gray-800 transition-all flex items-center"
                 >
                   {loading ? (
                     <>
                       <LoaderCircle className="animate-spin mr-2" />
-                      Generating from AI...
+                      Generating...
                     </>
                   ) : (
                     "Start Interview"
                   )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-4 py-3 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                >
-                  Cancel
                 </button>
               </div>
             </DialogPanel>

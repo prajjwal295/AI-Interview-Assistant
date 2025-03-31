@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import InterviewCard from "./InterviewCard";
 import { useUser } from "@clerk/nextjs";
-import { fetchInterviewByUser } from "../../../services/operations/Interview";
+import { fetchInterviewByUser ,fetchCompletedInterviewByUser} from "../../../services/operations/Interview";
 
 const InterviewList = () => {
   const [interviews, setInterviews] = useState([]);
@@ -15,7 +15,7 @@ const InterviewList = () => {
   const fetchInterViewHistory = async () => {
     try {
       const createdBy = user?.primaryEmailAddress?.emailAddress;
-      const response = await fetchInterviewByUser({ createdBy });
+      const response = await fetchCompletedInterviewByUser({ createdBy });
       setInterviews(response?.data || []);
     } catch (error) {
       console.error("Error fetching interview history:", error);

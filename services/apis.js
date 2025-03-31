@@ -6,5 +6,6 @@ export const endpoints = {
   FETCH_INTERVIEW_API: `${BASE_URL}/api/interviews/all`,
   FETCH_INTERVIEW_BYUSER_API: `${BASE_URL}/api/interviews/user`,
   FETCH_COMPLETED_INTERVIEW_BYUSER_API: `${BASE_URL}/api/interviews/user/completed`,
+  FETCH_INTERVIEW_BYID_API: `${BASE_URL}/api/interviews/fetchById`,
   UPDATE_INTERVIEW_API: `http://localhost:4000/api/interviews/update`,
 };

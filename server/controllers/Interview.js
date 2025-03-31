@@ -52,6 +52,7 @@ const createInterview = async (req, res) => {
 };
 
 const updateInterview = async (req, res) => {
+  console.log(req.body);
   try {
     const { answers, id } = req.body;
 
@@ -61,9 +62,11 @@ const updateInterview = async (req, res) => {
 
     const interviewRecord = await Interview.findOneAndUpdate(
       { mockId: id },
-      { UserAnswer: answers },
+      { userAnswers: answers },
       { new: true }
     ).exec();
+
+    console.log(interviewRecord);
 
     if (!interviewRecord) {
       return res.status(404).json({ error: "Interview record not found" });
@@ -125,7 +128,31 @@ const fetchAllInterviews = async (req, res) => {
   }
 };
 
-// Fetch Interviews by `createdBy` Controller
+const fetchInterviewDetailsById = async (req, res) => {
+  try {
+    const { mockId } = req.query;
+    if (!mockId) {
+      return res.status(400).json({
+        success: false,
+        message: "The 'mockId' parameter is required.",
+      });
+    }
+    console.log(mockId);
+    const interview = await Interview.findOne({ mockId: mockId });
+    res.status(200).json({
+      success: true,
+      message: "Interview Details fetched successfully!",
+      data: interview,
+    });
+  } catch (error) {
+    console.error("Error fetching interviews:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error. Could not fetch interview.",
+    });
+  }
+};
+
 const fetchInterviewsByUser = async (req, res) => {
   try {
     const { createdBy } = req.query;
@@ -171,9 +198,10 @@ const fetchCompltedInterviewsByUser = async (req, res) => {
       });
     }
 
-    const interviews = await Interview.find({ createdBy }).where(
-      (x) => x.aiFeedback != null
-    );
+    const interviews = await Interview.find({
+      createdBy,
+      aiFeedback: { $ne: null },
+    });
 
     if (interviews.length === 0) {
       return res.status(404).json({
@@ -204,4 +232,5 @@ module.exports = {
   updateInterview,
   fetchCompltedInterviewsByUser,
   updateInterviewFeedback,
+  fetchInterviewDetailsById,
 };
