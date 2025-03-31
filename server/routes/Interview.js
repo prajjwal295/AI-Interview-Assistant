@@ -5,18 +5,15 @@ const {
   fetchAllInterviews,
   fetchInterviewsByUser,
   updateInterview,
+  fetchCompltedInterviewsByUser,
+  updateInterviewFeedback,
 } = require("../controllers/Interview");
 
-// Create an interview
 router.post("/create", createInterview);
-
-// Fetch all interviews
-// hi there
 router.get("/all", fetchAllInterviews);
-
-// Fetch interviews by createdBy
-router.get("/user/:createdBy", fetchInterviewsByUser);
-
+router.get("/user", fetchInterviewsByUser);
+router.get("/user/completed/:createdBy", fetchCompltedInterviewsByUser);
 router.put("/update", updateInterview);
+router.put("/updateFeedback", updateInterviewFeedback);
 
 module.exports = router;

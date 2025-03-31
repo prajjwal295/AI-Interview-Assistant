@@ -2,7 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "./component/Header";
-import { Providers } from "./store/providers"; // ✅ Import a separate Client Provider
+import { Providers } from "./store/providers"; 
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

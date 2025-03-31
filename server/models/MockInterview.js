@@ -36,6 +36,11 @@ const mockInterviewSchema = new mongoose.Schema({
     required: true,
     default: randomUUID,
   },
+  aiFeedback: {
+    type: mongoose.Schema.Types.Mixed,
+    required: false,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model("Interview", mockInterviewSchema);

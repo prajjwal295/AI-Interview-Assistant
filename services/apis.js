@@ -1,8 +1,10 @@
-const BASE_URL = process.env.NEXT_BASE_URL;
+//const BASE_URL = process.env.NEXT_BASE_URL;
+const BASE_URL = "http://localhost:4000";
 
 export const endpoints = {
   CREATE_INTERVIEW_API: `http://localhost:4000/api/interviews/create`,
   FETCH_INTERVIEW_API: `${BASE_URL}/api/interviews/all`,
-  FETCH_INTERVIEW_BYUSER_API: `${BASE_URL}/api/interviews/user/:createdBy`,
+  FETCH_INTERVIEW_BYUSER_API: `${BASE_URL}/api/interviews/user`,
+  FETCH_COMPLETED_INTERVIEW_BYUSER_API: `${BASE_URL}/api/interviews/user/completed`,
   UPDATE_INTERVIEW_API: `http://localhost:4000/api/interviews/update`,
 };

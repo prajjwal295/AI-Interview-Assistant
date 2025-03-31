@@ -51,3 +51,51 @@ export const updateInterview = async ({ answers, id }) => {
 
   return data;
 };
+
+export const fetchInterviewByUser = async ({ createdBy }) => {
+  console.log(FETCH_INTERVIEW_BYUSER_API, createdBy);
+  let data;
+  try {
+    const response = await apiConnector(
+      "GET",
+      FETCH_INTERVIEW_BYUSER_API,
+      null,
+      null,
+      { createdBy }
+    );
+    //console.log("Get all Interview by user API Response.....", response);
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+    data = response.data;
+  } catch (error) {
+    console.log("Update Interview  API ERROR............", error);
+  }
+
+  return data;
+};
+
+export const fetchCompletedInterviewByUser = async ({ userId }) => {
+  let data;
+  try {
+    const createdBy = userId;
+    const response = await apiConnector(
+      "GET",
+      FETCH_COMPLETED_INTERVIEW_BYUSER_API,
+      null,
+      null,
+      { createdBy }
+    );
+    console.log("Get all Interview by user API Response.....", response);
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+    data = response.data;
+  } catch (error) {
+    console.log("Update Interview  API ERROR............", error);
+  }
+
+  return data;
+};

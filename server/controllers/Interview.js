@@ -1,7 +1,6 @@
 const Interview = require("../models/MockInterview");
 
 const createInterview = async (req, res) => {
-  console.log(req.body.formData);
   try {
     const {
       jsonMockResp,
@@ -53,7 +52,6 @@ const createInterview = async (req, res) => {
 };
 
 const updateInterview = async (req, res) => {
-  console.log(req);
   try {
     const { answers, id } = req.body;
 
@@ -64,6 +62,34 @@ const updateInterview = async (req, res) => {
     const interviewRecord = await Interview.findOneAndUpdate(
       { mockId: id },
       { UserAnswer: answers },
+      { new: true }
+    ).exec();
+
+    if (!interviewRecord) {
+      return res.status(404).json({ error: "Interview record not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Interview updated successfully", interviewRecord });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
+const updateInterviewFeedback = async (req, res) => {
+  try {
+    const { feedback, id } = req.body;
+
+    if (!id || !feedback) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const interviewRecord = await Interview.findOneAndUpdate(
+      { mockId: id },
+      { aiFeedback: feedback },
       { new: true }
     ).exec();
 
@@ -102,7 +128,7 @@ const fetchAllInterviews = async (req, res) => {
 // Fetch Interviews by `createdBy` Controller
 const fetchInterviewsByUser = async (req, res) => {
   try {
-    const { createdBy } = req.params;
+    const { createdBy } = req.query;
 
     if (!createdBy) {
       return res.status(400).json({
@@ -111,7 +137,7 @@ const fetchInterviewsByUser = async (req, res) => {
       });
     }
 
-    const interviews = await Interview.find({ createdBy }); // Fetch documents by createdBy
+    const interviews = await Interview.find({ createdBy });
 
     if (interviews.length === 0) {
       return res.status(404).json({
@@ -135,9 +161,47 @@ const fetchInterviewsByUser = async (req, res) => {
   }
 };
 
+const fetchCompltedInterviewsByUser = async (req, res) => {
+  try {
+    const { createdBy } = req.query;
+    if (!createdBy) {
+      return res.status(400).json({
+        success: false,
+        message: "The 'createdBy' parameter is required.",
+      });
+    }
+
+    const interviews = await Interview.find({ createdBy }).where(
+      (x) => x.aiFeedback != null
+    );
+
+    if (interviews.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No interviews found for the given user",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Interviews fetched successfully!",
+      data: interviews,
+    });
+  } catch (error) {
+    console.error("Error fetching interviews by createdBy:", error);
+    res.status(500).json({
+      success: false,
+      message:
+        "Internal server error. Could not fetch interviews by createdBy.",
+    });
+  }
+};
+
 module.exports = {
   createInterview,
   fetchAllInterviews,
   fetchInterviewsByUser,
   updateInterview,
+  fetchCompltedInterviewsByUser,
+  updateInterviewFeedback,
 };

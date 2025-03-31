@@ -1,6 +1,6 @@
 import React from "react";
 
-const DashboardLayout = ({ children }) => {
+const HistoryLayout = ({ children }) => {
   return (
     <div>
       <div className="mx-5 md:mx-20 lg:mx-36">{children}</div>
@@ -8,4 +8,4 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default HistoryLayout;
