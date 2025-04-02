@@ -41,6 +41,11 @@ const mockInterviewSchema = new mongoose.Schema({
     required: false,
     default: null,
   },
+  contestId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Contest",
+    default: null,
+  },
 });
 
 module.exports = mongoose.model("Interview", mockInterviewSchema);
