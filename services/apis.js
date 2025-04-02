@@ -7,6 +7,7 @@ export const endpoints = {
   FETCH_INTERVIEW_BYUSER_API: `${BASE_URL}/api/interviews/user`,
   FETCH_COMPLETED_INTERVIEW_BYUSER_API: `${BASE_URL}/api/interviews/user/completed`,
   UPDATE_INTERVIEW_API: `http://localhost:4000/api/interviews/update`,
+  FETCH_LEADERBOARD_API: `http://localhost:4000/api/interviews/LeaderBoardData`,
 };
 
 export const contestEndpoints = {

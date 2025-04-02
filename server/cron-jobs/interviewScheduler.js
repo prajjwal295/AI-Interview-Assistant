@@ -75,7 +75,7 @@ const closePreviousContests = async () => {
 };
 
 const scheduleInterviewJob = () => {
-  cron.schedule("34 1 * * *", async () => {
+  cron.schedule("0 0 * * *", async () => {
     console.log("Running the interview initiation cron job...");
     await closePreviousContests();
     await initiateInterview();

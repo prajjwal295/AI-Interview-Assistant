@@ -3,18 +3,37 @@ import { createInterview } from "../../../services/operations/Interview";
 import { chatSession } from "../../../utils/GeminiAI";
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { addQuestions } from "../../store/slice/interviewSlice";
+import { useDispatch } from "react-redux";
 
 const ContestCard = ({ data }) => {
+  const dispatch = useDispatch();
   const [jsonResponse, setJsonResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const router = useRouter();
   const { user } = useUser();
 
   const onEnrollClick = async () => {
-    createInterviewForContest();
+    setError(null);
+    setLoading(true);
+    try {
+      await createInterviewForContest();
+    } catch (error) {
+      setError("Failed to enroll. Please try again.");
+      console.error("Enrollment Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const createInterviewForContest = async () => {
-    const QuestionCount = process.env.NEXT_PUBLIC_QUESTION_COUNT;
+    if (!user) {
+      setError("You must be logged in to enroll.");
+      return;
+    }
+
+    const QuestionCount = process.env.NEXT_PUBLIC_QUESTION_COUNT || 5;
     const InputPrompt = `Job Position: ${data.jobPosition}, Job Description: ${data.jobDescription}, Years of Experience: ${data.jobExperience}. Based on the provided job role, description, and years of experience, please generate ${QuestionCount} interview question alongside its answers in json format`;
 
     try {
@@ -23,6 +42,10 @@ const ContestCard = ({ data }) => {
         .text()
         .replace("```json", "")
         .replace("```", "");
+
+      if (!MockJsonResp) {
+        throw new Error("Invalid response from AI.");
+      }
 
       const parsedResponse = JSON.parse(MockJsonResp);
       setJsonResponse(parsedResponse);
@@ -33,18 +56,21 @@ const ContestCard = ({ data }) => {
         jobDescription: data.jobDescription,
         jobExperience: data.jobExperience,
         createdBy: user?.primaryEmailAddress?.emailAddress,
-        constestId: data._id,
+        contestId: data._id,
       });
 
-      if (createInterviewResponse.success) {
-        dispatch(addQuestions(createInterviewResponse.data?.jsonMockResp));
-        router.push(
-          `/dashboard/interview/${createInterviewResponse.data?.mockId}`
-        );
+      if (!createInterviewResponse.success) {
+        throw new Error(createInterviewResponse.message || "Unknown error");
       }
 
-      console.log(createInterviewResponse);
+      dispatch(addQuestions(createInterviewResponse.data?.jsonMockResp));
+      router.push(
+        `/dashboard/interview/${createInterviewResponse.data?.mockId}`
+      );
     } catch (error) {
+      setError(
+        error.message || "An error occurred while creating the interview."
+      );
       console.error("Error during the submission:", error);
     }
   };
@@ -61,13 +87,17 @@ const ContestCard = ({ data }) => {
         <p className="text-sm text-gray-600 dark:text-gray-400">
           {data.difficulty}
         </p>
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       </div>
 
       <button
         onClick={onEnrollClick}
-        className="w-full bg-green-600 text-white font-medium py-3 rounded-lg hover:bg-green-400 transition duration-300"
+        disabled={loading}
+        className={`w-full text-white font-medium py-3 rounded-lg transition duration-300 ${
+          loading ? "bg-gray-400" : "bg-green-600 hover:bg-green-400"
+        }`}
       >
-        Enroll Now
+        {loading ? "Enrolling..." : "Enroll Now"}
       </button>
     </div>
   );

@@ -21,6 +21,7 @@ const fetchActiveContest = async (req, res) => {
   }
 };
 
+
 module.exports = {
   fetchActiveContest,
 };

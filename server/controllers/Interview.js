@@ -230,6 +230,42 @@ const fetchCompltedInterviewsByUser = async (req, res) => {
   }
 };
 
+const fetchLeaderBoardData = async () => {
+  try {
+    const { contestId } = req.query;
+    if (!contestId) {
+      return res.status(400).json({
+        success: false,
+        message: "The 'contestId' parameter is required.",
+      });
+    }
+
+    const interviews = await Interview.find({ contestId }).where(
+      (x) => x.aiFeedback != null
+    );
+
+    if (interviews.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No Data found for the given Contest",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Interviews fetched successfully!",
+      data: interviews,
+    });
+  } catch (error) {
+    console.error("Error fetching interviews for leaderboard:", error);
+    res.status(500).json({
+      success: false,
+      message:
+        "Internal server error. Could not fetch interviews for leaderboard",
+    });
+  }
+};
+
 module.exports = {
   createInterview,
   fetchAllInterviews,
@@ -237,4 +273,5 @@ module.exports = {
   updateInterview,
   fetchCompltedInterviewsByUser,
   updateInterviewFeedback,
+  fetchLeaderBoardData,
 };
