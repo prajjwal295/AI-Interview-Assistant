@@ -6,6 +6,10 @@ require("dotenv").config();
 const Port = process.env.Port || 4000;
 
 const database = require("./config/database");
+const interviewRoutes = require("./routes/Interview");
+const contestRoutes = require("./routes/Contest");
+const scheduleInterviewJob = require("./cron-jobs/interviewScheduler");
+
 database.dbConnect();
 
 const corsOptions = {
@@ -18,9 +22,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
 
-const interviewRoutes = require("./routes/Interview");
-
 app.use("/api/interviews", interviewRoutes);
+app.use("/api/contests", contestRoutes);
+
+scheduleInterviewJob();
 
 // default route
 app.get("/", (req, res) => {

@@ -1,6 +1,9 @@
 const Interview = require("../models/MockInterview");
+const Contest = require("../models/Contest");
 
 const createInterview = async (req, res) => {
+  console.log(req.body);
+
   try {
     const {
       jsonMockResp,
@@ -8,8 +11,10 @@ const createInterview = async (req, res) => {
       jobDescription,
       jobExperience,
       createdBy,
+      contestId,
     } = req.body.formData;
 
+    // ✅ Validate required fields
     if (
       !jsonMockResp ||
       !jobPosition ||
@@ -24,18 +29,46 @@ const createInterview = async (req, res) => {
       });
     }
 
-    // Create a new Interview document
+    if (contestId) {
+      const contest = await Contest.findById(contestId);
+
+      if (!contest) {
+        return res.status(404).json({
+          success: false,
+          message: "Contest not found.",
+        });
+      }
+
+      const isEnrolled = contest.enrollments.some((x) => x === createdBy);
+
+      if (isEnrolled) {
+        return res.status(400).json({
+          success: false,
+          message: "You are already enrolled in the contest.",
+        });
+      }
+    }
+
     const interview = new Interview({
       jsonMockResp,
       jobPosition,
       jobDescription,
       jobExperience,
       createdBy,
+      contestId: contestId || null,
     });
 
     await interview.save();
 
-    console.log(interview);
+    if (contestId) {
+      await Contest.findByIdAndUpdate(
+        contestId,
+        { $push: { enrollments: createdBy } },
+        { new: true }
+      );
+    }
+
+    console.log("Interview Created:", interview);
 
     res.status(201).json({
       success: true,
@@ -225,6 +258,42 @@ const fetchCompltedInterviewsByUser = async (req, res) => {
   }
 };
 
+const fetchLeaderBoardData = async () => {
+  try {
+    const { contestId } = req.query;
+    if (!contestId) {
+      return res.status(400).json({
+        success: false,
+        message: "The 'contestId' parameter is required.",
+      });
+    }
+
+    const interviews = await Interview.find({ contestId }).where(
+      (x) => x.aiFeedback != null
+    );
+
+    if (interviews.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No Data found for the given Contest",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Interviews fetched successfully!",
+      data: interviews,
+    });
+  } catch (error) {
+    console.error("Error fetching interviews for leaderboard:", error);
+    res.status(500).json({
+      success: false,
+      message:
+        "Internal server error. Could not fetch interviews for leaderboard",
+    });
+  }
+};
+
 module.exports = {
   createInterview,
   fetchAllInterviews,
@@ -232,5 +301,6 @@ module.exports = {
   updateInterview,
   fetchCompltedInterviewsByUser,
   updateInterviewFeedback,
+  fetchLeaderBoardData,
   fetchInterviewDetailsById,
 };

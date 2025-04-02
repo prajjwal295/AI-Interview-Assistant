@@ -6,6 +6,7 @@ const {
   FETCH_COMPLETED_INTERVIEW_BYUSER_API,
   FETCH_INTERVIEW_BYUSER_API,
   UPDATE_INTERVIEW_API,
+  FETCH_LEADERBOARD_API,
   FETCH_INTERVIEW_BYID_API,
 } = endpoints;
 
@@ -118,6 +119,30 @@ export const fetchCompletedInterviewByUser = async ({ createdBy }) => {
     data = response.data;
   } catch (error) {
     console.log("Get Interview  API ERROR............", error);
+  }
+
+  return data;
+};
+
+
+export const fetchLeaderBoardData = async ({ contestId }) => {
+  let data;
+  try {
+    const response = await apiConnector(
+      "GET",
+      FETCH_LEADERBOARD_API,
+      null,
+      null,
+      { contestId }
+    );
+    console.log("LeaderBoard API Response.....", response);
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+    data = response.data;
+  } catch (error) {
+    console.log("LeaderBoard API Response ERROR............", error);
   }
 
   return data;

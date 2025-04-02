@@ -7,6 +7,7 @@ const {
   updateInterview,
   fetchCompltedInterviewsByUser,
   updateInterviewFeedback,
+  fetchLeaderBoardData,
   fetchInterviewDetailsById
 } = require("../controllers/Interview");
 
@@ -17,5 +18,6 @@ router.get("/user", fetchInterviewsByUser);
 router.get("/user/completed", fetchCompltedInterviewsByUser);
 router.put("/update", updateInterview);
 router.put("/updateFeedback", updateInterviewFeedback);
+router.get("/LeaderBoardData", fetchLeaderBoardData);
 
 module.exports = router;

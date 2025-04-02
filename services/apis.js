@@ -8,4 +8,9 @@ export const endpoints = {
   FETCH_COMPLETED_INTERVIEW_BYUSER_API: `${BASE_URL}/api/interviews/user/completed`,
   FETCH_INTERVIEW_BYID_API: `${BASE_URL}/api/interviews/fetchById`,
   UPDATE_INTERVIEW_API: `http://localhost:4000/api/interviews/update`,
+  FETCH_LEADERBOARD_API: `http://localhost:4000/api/interviews/LeaderBoardData`,
+};
+
+export const contestEndpoints = {
+  FETCH_ACTIVE_CONTEST: `${BASE_URL}/api/contests/active`,
 };

@@ -27,7 +27,7 @@ const Header = () => {
 
         {/* Desktop Menu */}
         <nav className="hidden md:flex gap-8 text-lg">
-          {["dashboard", "history", "upgrade", "hiw"].map((item) => (
+          {["dashboard", "history", "upgrade", "contest"].map((item) => (
             <Link
               key={item}
               href={`/${item}`}
@@ -61,7 +61,7 @@ const Header = () => {
       {isOpen && (
         <nav className="md:hidden mt-4 bg-black p-4 rounded-lg shadow-lg border border-neon-blue animate-fadeIn">
           <ul className="flex flex-col gap-4">
-            {["dashboard", "history", "upgrade", "hiw"].map((item) => (
+            {["dashboard", "history", "upgrade", "contest"].map((item) => (
               <li
                 key={item}
                 className="border-b border-gray-700 pb-2 last:border-none"
