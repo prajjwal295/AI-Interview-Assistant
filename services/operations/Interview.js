@@ -3,14 +3,15 @@ import { apiConnector } from "../apiconnector";
 const {
   CREATE_INTERVIEW_API,
   FETCH_INTERVIEW_API,
+  FETCH_COMPLETED_INTERVIEW_BYUSER_API,
   FETCH_INTERVIEW_BYUSER_API,
   UPDATE_INTERVIEW_API,
   FETCH_LEADERBOARD_API,
+  FETCH_INTERVIEW_BYID_API,
 } = endpoints;
 
 export const createInterview = async (formData, token) => {
   let data;
-  console.log(formData);
   try {
     const response = await apiConnector("POST", CREATE_INTERVIEW_API, {
       formData,
@@ -44,8 +45,8 @@ export const updateInterview = async ({ answers, id }) => {
       throw new Error(response.data.message);
     }
 
-    data = response.data;
-    console.log(response);
+    data = response?.data;
+    console.log(data);
   } catch (error) {
     console.log("Update Interview  API ERROR............", error);
   }
@@ -54,7 +55,6 @@ export const updateInterview = async ({ answers, id }) => {
 };
 
 export const fetchInterviewByUser = async ({ createdBy }) => {
-  console.log(FETCH_INTERVIEW_BYUSER_API, createdBy);
   let data;
   try {
     const response = await apiConnector(
@@ -71,22 +71,22 @@ export const fetchInterviewByUser = async ({ createdBy }) => {
     }
     data = response.data;
   } catch (error) {
-    console.log("Update Interview  API ERROR............", error);
+    console.log("Get Interview  API ERROR............", error);
   }
 
   return data;
 };
 
-export const fetchCompletedInterviewByUser = async ({ userId }) => {
+export const fetchInterviewById = async ({ mockId }) => {
   let data;
+  console.log(mockId);
   try {
-    const createdBy = userId;
     const response = await apiConnector(
       "GET",
-      FETCH_COMPLETED_INTERVIEW_BYUSER_API,
+      FETCH_INTERVIEW_BYID_API,
       null,
       null,
-      { createdBy }
+      { mockId }
     );
     console.log("Get all Interview by user API Response.....", response);
 
@@ -95,7 +95,30 @@ export const fetchCompletedInterviewByUser = async ({ userId }) => {
     }
     data = response.data;
   } catch (error) {
-    console.log("Update Interview  API ERROR............", error);
+    console.log("Get Interview  API ERROR............", error);
+  }
+
+  return data;
+};
+
+export const fetchCompletedInterviewByUser = async ({ createdBy }) => {
+  let data;
+  try {
+    const response = await apiConnector(
+      "GET",
+      FETCH_COMPLETED_INTERVIEW_BYUSER_API,
+      null,
+      null,
+      { createdBy }
+    );
+    //console.log("Get all Interview by user API Response.....", response);
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+    data = response.data;
+  } catch (error) {
+    console.log("Get Interview  API ERROR............", error);
   }
 
   return data;

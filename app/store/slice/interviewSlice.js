@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   questions: null,
-  answers: null,
+  answers: {},
 };
 
 const interviewSlice = createSlice({
@@ -14,7 +14,6 @@ const interviewSlice = createSlice({
     },
     addAnswers: (state, actions) => {
       const { index, answer } = actions.payload;
-      if (!state.answers) state.answers = {};
       state.answers[index] = answer;
     },
     resetInterview: (state) => {
