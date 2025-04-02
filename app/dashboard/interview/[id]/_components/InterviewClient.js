@@ -10,6 +10,7 @@ import {
   updateInterview,
   fetchInterviewById,
 } from "../../../../../services/operations/Interview";
+import AiFeedbackModal from "./AiFeedbackModal";
 
 const InterviewClient = () => {
   const router = useRouter();
@@ -19,6 +20,7 @@ const InterviewClient = () => {
   const [isActive, setIsActive] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [finalTranscript, setFinalTranscript] = useState("");
+  const [openModal, setOpenModal] = useState(false);
   const params = useParams();
   const { id } = params;
 
@@ -34,10 +36,12 @@ const InterviewClient = () => {
     const aList = data?.data?.userAnswers;
     setQuestions(qList);
 
-    aList?.map((answerSet) => {
-      var idx = answerSet[0];
-      var answer = answerSet[1];
+    // console.log(aList);
 
+    aList?.map((answerSet) => {
+      var idx = answerSet.id;
+      var answer = answerSet.answer;
+      console.log(`Dispatching Answer: index=${idx}, answer=${answer}`);
       dispatch(addAnswers({ index: idx, answer: answer }));
     });
   };
@@ -96,6 +100,7 @@ const InterviewClient = () => {
       }));
       console.log(answerArray);
       const saveAnswer = await updateInterview({ answers: answerArray, id });
+      setOpenModal(true);
       console.log(saveAnswer);
     }
   };
@@ -181,6 +186,7 @@ const InterviewClient = () => {
           </button>
         </div>
       </div>
+      {openModal && <AiFeedbackModal id={id} setOpenModal={setOpenModal} />}
     </div>
   );
 };
