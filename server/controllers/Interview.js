@@ -1,9 +1,8 @@
 const Interview = require("../models/MockInterview");
 const Contest = require("../models/Contest");
+const AiResponse = require("../models/AiResponse");
 
 const createInterview = async (req, res) => {
-  console.log(req.body);
-
   try {
     const {
       jsonMockResp,
@@ -14,7 +13,6 @@ const createInterview = async (req, res) => {
       contestId,
     } = req.body.formData;
 
-    // ✅ Validate required fields
     if (
       !jsonMockResp ||
       !jobPosition ||
@@ -68,8 +66,6 @@ const createInterview = async (req, res) => {
       );
     }
 
-    console.log("Interview Created:", interview);
-
     res.status(201).json({
       success: true,
       message: "Interview created successfully!",
@@ -85,7 +81,6 @@ const createInterview = async (req, res) => {
 };
 
 const updateInterview = async (req, res) => {
-  console.log(req.body);
   try {
     const { answers, id } = req.body;
 
@@ -98,8 +93,6 @@ const updateInterview = async (req, res) => {
       { userAnswers: answers },
       { new: true }
     ).exec();
-
-    console.log(interviewRecord);
 
     if (!interviewRecord) {
       return res.status(404).json({ error: "Interview record not found" });
@@ -117,29 +110,62 @@ const updateInterview = async (req, res) => {
 
 const updateInterviewFeedback = async (req, res) => {
   try {
-    const { feedback, id } = req.body;
+    const { questionFeedback, areasToImprove, overallPerformance, score, id } =
+      req.body;
 
-    if (!id || !feedback) {
+    if (
+      !id ||
+      !questionFeedback ||
+      !areasToImprove ||
+      !overallPerformance ||
+      !score
+    ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const interviewRecord = await Interview.findOneAndUpdate(
-      { mockId: id },
-      { aiFeedback: feedback },
-      { new: true }
-    ).exec();
+    // Find the interview by mockId
+    const interview = await Interview.findOne({ mockId: id });
 
-    if (!interviewRecord) {
-      return res.status(404).json({ error: "Interview record not found" });
+    if (!interview) {
+      return res.status(404).json({ error: "InterviewId is not valid" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Interview updated successfully", interviewRecord });
+    if (interview.aiFeedback == null) {
+      return res.status(404).json({ error: "Ai response is already present" });
+    }
+
+    // Save the AI response
+    const aiResponse = new AiResponse({
+      questionFeedback,
+      areasToImprove,
+      overallPerformance,
+      score,
+      interviewId: interview._id,
+    });
+
+    await aiResponse.save();
+
+    await Interview.findOneAndUpdate(
+      { mockId: id },
+      { aiFeedback: aiResponse._id },
+      { new: true }
+    );
+
+    const updatedInterview = await Interview.findOne({ mockId: id }).populate(
+      "aiFeedback"
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Interview updated successfully",
+      interview: updatedInterview,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Internal Server Error", details: error.message });
+    res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+      details: error.message,
+    });
   }
 };
 
@@ -170,7 +196,6 @@ const fetchInterviewDetailsById = async (req, res) => {
         message: "The 'mockId' parameter is required.",
       });
     }
-    console.log(mockId);
     const interview = await Interview.findOne({ mockId: mockId });
     res.status(200).json({
       success: true,

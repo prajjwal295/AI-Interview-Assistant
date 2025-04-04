@@ -32,11 +32,14 @@ const InterviewClient = () => {
 
   const fetchInterviewDetails = async (id) => {
     const data = await fetchInterviewById({ mockId: id });
+
+    if (data?.data?.aiFeedback) {
+      router.push(`/history/${id}`);
+    }
+
     const qList = data?.data?.jsonMockResp?.map((res) => res.question);
     const aList = data?.data?.userAnswers;
     setQuestions(qList);
-
-    // console.log(aList);
 
     aList?.map((answerSet) => {
       var idx = answerSet.id;
@@ -100,8 +103,8 @@ const InterviewClient = () => {
       }));
       console.log(answerArray);
       const saveAnswer = await updateInterview({ answers: answerArray, id });
+
       setOpenModal(true);
-      console.log(saveAnswer);
     }
   };
 

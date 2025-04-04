@@ -37,8 +37,8 @@ const mockInterviewSchema = new mongoose.Schema({
     default: randomUUID,
   },
   aiFeedback: {
-    type: mongoose.Schema.Types.Mixed,
-    required: false,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AiResponse",
     default: null,
   },
   contestId: {

@@ -51,10 +51,10 @@ const AddNewInterview = () => {
 
       if (createInterviewResponse.success) {
         dispatch(addQuestions(createInterviewResponse.data?.jsonMockResp));
-        setOpen(false);
         router.push(
           `/dashboard/interview/${createInterviewResponse.data?.mockId}`
         );
+      setOpen(false);
       }
     } catch (error) {
       console.error("Error during the submission:", error);

@@ -8,6 +8,7 @@ const {
   UPDATE_INTERVIEW_API,
   FETCH_LEADERBOARD_API,
   FETCH_INTERVIEW_BYID_API,
+  UPDATE_INTERVIEW_FEEDBACK_API,
 } = endpoints;
 
 export const createInterview = async (formData, token) => {
@@ -37,6 +38,37 @@ export const updateInterview = async ({ answers, id }) => {
   try {
     const response = await apiConnector("PUT", UPDATE_INTERVIEW_API, {
       answers,
+      id,
+    });
+    console.log("Update Interview API Response.....", response);
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    data = response?.data;
+    console.log(data);
+  } catch (error) {
+    console.log("Update Interview  API ERROR............", error);
+  }
+
+  return data;
+};
+
+export const updateAiResponseInterview = async ({
+  questionFeedback,
+  areasToImprove,
+  overallPerformance,
+  score,
+  id,
+}) => {
+  let data;
+  try {
+    const response = await apiConnector("PUT", UPDATE_INTERVIEW_FEEDBACK_API, {
+      questionFeedback,
+      areasToImprove,
+      overallPerformance,
+      score,
       id,
     });
     console.log("Update Interview API Response.....", response);
@@ -123,7 +155,6 @@ export const fetchCompletedInterviewByUser = async ({ createdBy }) => {
 
   return data;
 };
-
 
 export const fetchLeaderBoardData = async ({ contestId }) => {
   let data;
