@@ -64,19 +64,28 @@ const Header = () => {
       {isOpen && (
         <div className="md:hidden w-full bg-[#0f172a] border-t border-neon-blue py-4">
           <ul className="flex flex-col gap-3 px-6">
-            {navItems.map((item) => (
-              <li key={item}>
-                <Link
-                  href={item === "home" ? "/" : `/${item}`}
-                  onClick={() => setIsOpen(false)}
-                  className={`block w-full text-center text-gray-300 hover:text-neon-blue font-medium uppercase transition ${
-                    path === `/${item}` ? "text-neon-blue font-bold" : ""
-                  }`}
-                >
-                  {item.charAt(0).toUpperCase() + item.slice(1)}
-                </Link>
-              </li>
-            ))}
+            {navItems.map((item) => {
+              const href = item === "home" ? "/" : `/${item}`;
+              const isActive = path === href;
+
+              return (
+                <li key={item}>
+                  <Link
+                    href={href}
+                    onClick={() => setIsOpen(false)}
+                    className={`block w-full text-center font-medium uppercase transition 
+          ${
+            isActive
+              ? "text-neon-blue font-bold underline"
+              : "text-gray-300 hover:text-neon-blue"
+          }`}
+                  >
+                    {item.charAt(0).toUpperCase() + item.slice(1)}
+                  </Link>
+                </li>
+              );
+            })}
+
             <li className="pt-2 flex justify-center">
               <UserButton />
             </li>

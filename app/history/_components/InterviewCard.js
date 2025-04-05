@@ -12,7 +12,7 @@ const InterviewCard = ({ data, isActive }) => {
   };
 
   return (
-    <div className="bg-gray-800 border border-gray-700 rounded-2xl shadow-lg p-6 w-[320px] h-[300px] flex flex-col justify-between transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-xl">
+    <div className="bg-gray-800 border border-gray-700 rounded-2xl shadow-lg p-6 w-[300px] h-[300px] flex flex-col justify-between transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-xl">
       <div>
         <h1 className="text-xl font-semibold text-white">{data.jobPosition}</h1>
         <h2 className="text-lg text-gray-400">

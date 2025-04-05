@@ -298,7 +298,7 @@ const fetchCompltedInterviewsByUser = async (req, res) => {
   }
 };
 
-const fetchLeaderBoardData = async () => {
+const fetchLeaderBoardData = async (req, res) => {
   try {
     const { contestId } = req.query;
     if (!contestId) {
