@@ -1,18 +1,36 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import ContestDashBoard from "./_components/ContestDashboard";
 
 const Contest = () => {
+  const [isActive, setIsActive] = useState(0);
   return (
-    <div className="w-full min-h-screen bg-gray-950 text-white px-6 md:px-10 lg:px-20 py-10">
-      {/* Heading */}
-      <div className="mb-6">
-        <h2 className="font-extrabold text-3xl md:text-4xl">Contests</h2>
-        <p className="text-gray-400 mt-2 text-sm md:text-base">
-          Join Into the Exciting Contest
-        </p>
-      </div>
+    <div className="w-full min-h-screen bg-gray-950 text-white px-4 py-6 sm:px-8 md:px-12 lg:px-24 xl:px-32">
+      {/* Buttons */}
+      <div className="flex w-full gap-4 flex-col sm:flex-row mb-8">
+        <button
+          className={`w-full sm:w-auto py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
+            isActive === 0
+              ? "bg-white text-black"
+              : "bg-gray-700 text-white hover:bg-gray-600"
+          }`}
+          onClick={() => setIsActive(0)}
+        >
+          Today's Contest
+        </button>
 
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <button
+          className={`w-full sm:w-auto py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
+            isActive === 1
+              ? "bg-white text-black"
+              : "bg-gray-700 text-white hover:bg-gray-600"
+          }`}
+          onClick={() => setIsActive(1)}
+        >
+          Previous Contest
+        </button>
+      </div>
+      <div className="w-full">
         <ContestDashBoard />
       </div>
     </div>

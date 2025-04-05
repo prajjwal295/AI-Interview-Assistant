@@ -6,9 +6,21 @@ import { useUser } from "@clerk/nextjs";
 import { addQuestions } from "../../store/slice/interviewSlice";
 import { useDispatch } from "react-redux";
 
+const getColorByDifficulty = (level) => {
+  switch (level.toLowerCase()) {
+    case "easy":
+      return "bg-green-600 text-white";
+    case "medium":
+      return "bg-yellow-400 text-black";
+    case "hard":
+      return "bg-red-600 text-white";
+    default:
+      return "bg-gray-500 text-white";
+  }
+};
+
 const ContestCard = ({ data }) => {
   const dispatch = useDispatch();
-  const [jsonResponse, setJsonResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -48,7 +60,6 @@ const ContestCard = ({ data }) => {
       }
 
       const parsedResponse = JSON.parse(MockJsonResp);
-      setJsonResponse(parsedResponse);
 
       const createInterviewResponse = await createInterview({
         jsonMockResp: parsedResponse,
@@ -76,29 +87,37 @@ const ContestCard = ({ data }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-2xl shadow-lg p-6 h-[300px] flex flex-col justify-between transition-transform transform hover:scale-105 hover:shadow-2xl">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          Job Role: {data.jobPosition}
+    <div className="bg-white border border-gray-300 rounded-2xl shadow-md p-6 w-full h-[320px] flex flex-col justify-between transition-transform duration-300 hover:scale-[1.03]">
+      <div className="space-y-3">
+        <h1 className="text-xl font-semibold text-gray-900">
+          {data.jobPosition}
         </h1>
-        <h2 className="text-lg text-gray-700 dark:text-gray-300 mb-2">
-          Experience: {data.jobExperience}
-        </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          {data.difficulty}
+        <p className="text-sm text-gray-600">
+          <span className="font-medium">Experience:</span> {data.jobExperience}{" "}
+          years
         </p>
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+        <span
+          className={`inline-block px-3 py-1 text-xs font-semibold rounded-full w-fit ${getColorByDifficulty(
+            data.difficulty
+          )}`}
+        >
+          {data.difficulty}
+        </span>
       </div>
 
       <button
         onClick={onEnrollClick}
         disabled={loading}
-        className={`w-full text-white font-medium py-3 rounded-lg transition duration-300 ${
-          loading ? "bg-gray-400" : "bg-green-600 hover:bg-green-400"
-        }`}
+        className="mt-6 w-full bg-gray-900 text-white font-semibold py-2 rounded-lg hover:bg-gray-700 transition duration-300"
       >
         {loading ? "Enrolling..." : "Enroll Now"}
       </button>
+
+      {error && (
+        <p className="mt-2 text-sm text-red-500 font-medium text-center">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

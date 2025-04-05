@@ -11,7 +11,7 @@ const Header = () => {
   const path = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  const navItems = ["dashboard", "history", "upgrade", "contest"];
+  const navItems = ["home", "dashboard", "history", "contest"];
 
   return (
     <header className="bg-[#0f172a] border-b border-neon-blue h-[8vh] w-full shadow-md z-50">
@@ -67,7 +67,7 @@ const Header = () => {
             {navItems.map((item) => (
               <li key={item}>
                 <Link
-                  href={`/${item}`}
+                  href={item === "home" ? "/" : `/${item}`}
                   onClick={() => setIsOpen(false)}
                   className={`block w-full text-center text-gray-300 hover:text-neon-blue font-medium uppercase transition ${
                     path === `/${item}` ? "text-neon-blue font-bold" : ""

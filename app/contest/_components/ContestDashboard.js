@@ -3,6 +3,7 @@ import { fetchActiveContest } from "../../../services/operations/Contest";
 import React, { useEffect, useState } from "react";
 import ContestCard from "./ContestCard";
 import LeaderBoard from "./LeaderBoard";
+import CardSkeleton from "@/app/component/CardSkeleton";
 
 const ContestDashBoard = () => {
   const [activeContest, setActiveContest] = useState(null);
@@ -24,20 +25,20 @@ const ContestDashBoard = () => {
   };
 
   return (
-    <div className="w-full px-6 md:px-10 lg:px-20 py-6 bg-gray-950 text-white">
+    <div className="w-full">
       {loading ? (
-        <p className="text-lg text-gray-400 animate-pulse">
-          Loading contests...
-        </p>
+        <CardSkeleton />
       ) : activeContest ? (
-        <div className="w-full space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="w-full max-w-7xl space-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <ContestCard data={activeContest} />
             <LeaderBoard contestId={activeContest._id} />
           </div>
         </div>
       ) : (
-        <p className="text-gray-500">No active contests available.</p>
+        <p className="text-lg text-gray-500 italic border border-gray-700 px-6 py-4 rounded-lg">
+          No active contests available.
+        </p>
       )}
     </div>
   );
