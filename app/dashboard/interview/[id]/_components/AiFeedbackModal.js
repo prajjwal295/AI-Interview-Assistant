@@ -95,15 +95,13 @@ const AiFeedbackModal = ({ id, setOpenModal }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-md w-[90%] p-6 text-center">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-          AI ScoreCard
-        </h2>
+      <div className="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-[90%] p-6 text-center">
+        <h2 className="text-2xl font-bold mb-6">AI ScoreCard</h2>
 
         {finalScore === null ? (
           <div className="flex flex-col items-center justify-center gap-4">
             <div className="w-12 h-12 border-4 border-blue-500 border-dotted rounded-full animate-spin"></div>
-            <p className="text-gray-600 dark:text-gray-300 text-base font-medium">
+            <p className="text-gray-300 text-base font-medium">
               We're calculating your score...
             </p>
           </div>
@@ -117,21 +115,21 @@ const AiFeedbackModal = ({ id, setOpenModal }) => {
               />
             </div>
 
-            <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-6">
+            <p className="text-lg font-medium text-gray-300 mb-6">
               Final Score:{" "}
-              <span className="font-bold text-green-600">{finalScore}/10</span>
+              <span className="font-bold text-green-500">{finalScore}/10</span>
             </p>
 
             <div className="flex justify-between gap-4">
               <button
                 onClick={onClose}
-                className="w-full bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white py-2 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+                className="w-full bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-600 transition"
               >
                 Go To Home
               </button>
               <button
                 onClick={onOk}
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                className="w-full bg-white text-black py-2 rounded-lg hover:bg-gray-200 transition"
               >
                 Check Full Details
               </button>

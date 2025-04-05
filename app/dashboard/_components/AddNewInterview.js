@@ -54,7 +54,7 @@ const AddNewInterview = () => {
         router.push(
           `/dashboard/interview/${createInterviewResponse.data?.mockId}`
         );
-      setOpen(false);
+        setOpen(false);
       }
     } catch (error) {
       console.error("Error during the submission:", error);
@@ -65,39 +65,42 @@ const AddNewInterview = () => {
 
   return (
     <div>
+      {/* Trigger button */}
       <div
-        className="p-3 border rounded-lg bg-white text-gray-900 font-semibold shadow-md transition-all transform hover:scale-105 hover:shadow-lg cursor-pointer"
+        className="p-4 border rounded-lg bg-white text-black font-semibold shadow-md transition-all transform hover:scale-105 hover:shadow-lg cursor-pointer"
         onClick={() => setOpen(true)}
       >
-        <h2 className="text-center">+ Add New</h2>
+        <h2 className="text-center text-lg">+ Add New</h2>
       </div>
 
+      {/* Modal Dialog */}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
         className="relative z-10"
       >
-        <DialogBackdrop className="fixed inset-0 bg-black/70 opacity-75 transition-opacity" />
+        <DialogBackdrop className="fixed inset-0 bg-black/70 transition-opacity" />
+
         <form onSubmit={onSubmit}>
-          <div className="fixed inset-0 z-10 flex items-center justify-center p-6">
-            <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-3xl p-6">
-              <DialogTitle className="text-2xl font-bold text-gray-900 mb-4 text-center">
+          <div className="fixed inset-0 z-10 flex items-center justify-center p-4">
+            <DialogPanel className="relative w-full max-w-3xl transform overflow-hidden rounded-2xl bg-gray-900 text-white shadow-xl transition-all p-6">
+              <DialogTitle className="text-2xl font-bold text-neon-blue mb-6 text-center">
                 Job Interview Details
               </DialogTitle>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {/* Job Role */}
                 <div>
                   <label
                     htmlFor="job_role"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-300"
                   >
                     Job Role / Position
                   </label>
                   <input
                     type="text"
                     id="job_role"
-                    className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-900 focus:ring-2 focus:ring-black focus:outline-none transition-all"
+                    className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-blue focus:outline-none"
                     placeholder="Ex. Full Stack Developer"
                     required
                     value={jobRole}
@@ -109,14 +112,14 @@ const AddNewInterview = () => {
                 <div>
                   <label
                     htmlFor="job_description"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-300"
                   >
                     Job Description / Tech Stack
                   </label>
                   <textarea
                     id="job_description"
                     rows="4"
-                    className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-900 focus:ring-2 focus:ring-black focus:outline-none transition-all"
+                    className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-blue focus:outline-none"
                     placeholder="Ex. React, Node.js, MongoDB"
                     required
                     value={jobDescription}
@@ -128,14 +131,14 @@ const AddNewInterview = () => {
                 <div>
                   <label
                     htmlFor="years_experience"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-300"
                   >
                     Years of Experience
                   </label>
                   <input
                     type="number"
                     id="years_experience"
-                    className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-900 focus:ring-2 focus:ring-black focus:outline-none transition-all"
+                    className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-blue focus:outline-none"
                     placeholder="Ex. 5"
                     max={50}
                     required
@@ -145,12 +148,12 @@ const AddNewInterview = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="mt-6 flex justify-end space-x-4">
+              {/* Buttons */}
+              <div className="mt-6 flex justify-end gap-4">
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="px-4 py-3 text-sm font-medium text-gray-700 border border-gray-300 rounded-md bg-white hover:bg-gray-100 transition-all"
+                  className="px-4 py-2 text-sm font-medium text-gray-300 border border-gray-600 rounded-md bg-gray-800 hover:bg-gray-700 transition-all"
                 >
                   Cancel
                 </button>
@@ -158,11 +161,11 @@ const AddNewInterview = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-3 text-sm font-medium text-white bg-black rounded-md hover:bg-gray-800 transition-all flex items-center"
+                  className="px-5 py-2.5 text-sm font-semibold text-black bg-yellow-500 rounded-md hover:bg-yellow-600 transition-all flex items-center"
                 >
                   {loading ? (
                     <>
-                      <LoaderCircle className="animate-spin mr-2" />
+                      <LoaderCircle className="animate-spin mr-2 h-4 w-4" />
                       Generating...
                     </>
                   ) : (

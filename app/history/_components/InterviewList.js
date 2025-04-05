@@ -1,7 +1,7 @@
-"use client";
-import React, { useEffect, useState } from "react";
 import InterviewCard from "./InterviewCard";
+import CardSkeleton from "../../component/CardSkeleton"; // <-- import this
 import { useUser } from "@clerk/nextjs";
+import React, { useEffect, useState } from "react";
 import {
   fetchCompletedInterviewByUser,
   fetchInterviewByUser,
@@ -9,6 +9,7 @@ import {
 
 const InterviewList = ({ isActive }) => {
   const [interviews, setInterviews] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
 
@@ -20,40 +21,43 @@ const InterviewList = ({ isActive }) => {
   }, [user, isActive]);
 
   const fetchInterViewHistory = async () => {
+    setLoading(true);
     try {
       const createdBy = user?.primaryEmailAddress?.emailAddress;
-      var response;
-      if (isActive === 0) {
-        response = await fetchCompletedInterviewByUser({ createdBy });
-      } else {
-        response = await fetchInterviewByUser({ createdBy });
-      }
+      const response =
+        isActive === 0
+          ? await fetchInterviewByUser({ createdBy })
+          : await fetchCompletedInterviewByUser({ createdBy });
 
       setInterviews(response?.data || []);
     } catch (error) {
       console.error("Error fetching interview history:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   if (!isClient) return null;
 
   return (
-    <div className="relative w-full">
-      {/* Horizontal Scroll Container */}
-      <div className="flex overflow-x-scroll space-x-4 py-5 px-2 snap-x scroll-smooth transition-all duration-500 ease-in-out no-scrollbar">
-        {interviews.length > 0 ? (
-          interviews.map((d) => (
-            <div
-              key={d.mockId}
-              className="min-w-[320px] snap-start transition-transform duration-500 ease-in-out hover:scale-105"
-            >
-              <InterviewCard data={d} isActive={isActive} />
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500">No interview history found.</p>
-        )}
-      </div>
+    <div className="w-full">
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <CardSkeleton key={index} />
+          ))}
+        </div>
+      ) : interviews.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {interviews.map((d) => (
+            <InterviewCard key={d.mockId} data={d} isActive={isActive} />
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-400 text-center mt-10">
+          No interview history found.
+        </p>
+      )}
     </div>
   );
 };

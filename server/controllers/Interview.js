@@ -85,7 +85,9 @@ const updateInterview = async (req, res) => {
     const { answers, id } = req.body;
 
     if (!id || !answers) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res
+        .status(400)
+        .json({ success: false, error: "Missing required fields" });
     }
 
     const interviewRecord = await Interview.findOneAndUpdate(
@@ -98,13 +100,17 @@ const updateInterview = async (req, res) => {
       return res.status(404).json({ error: "Interview record not found" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Interview updated successfully", interviewRecord });
+    res.status(200).json({
+      success: true,
+      message: "Interview updated successfully",
+      interviewRecord,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Internal Server Error", details: error.message });
+    res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+      details: error.message,
+    });
   }
 };
 
@@ -120,18 +126,24 @@ const updateInterviewFeedback = async (req, res) => {
       !overallPerformance ||
       !score
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res
+        .status(400)
+        .json({ success: false, error: "Missing required fields" });
     }
 
     // Find the interview by mockId
     const interview = await Interview.findOne({ mockId: id });
 
     if (!interview) {
-      return res.status(404).json({ error: "InterviewId is not valid" });
+      return res
+        .status(404)
+        .json({ success: false, error: "InterviewId is not valid" });
     }
 
-    if (interview.aiFeedback == null) {
-      return res.status(404).json({ error: "Ai response is already present" });
+    if (interview.aiFeedback != null) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Ai response is already present" });
     }
 
     // Save the AI response
@@ -196,7 +208,10 @@ const fetchInterviewDetailsById = async (req, res) => {
         message: "The 'mockId' parameter is required.",
       });
     }
-    const interview = await Interview.findOne({ mockId: mockId });
+    const interview = await Interview.findOne({ mockId: mockId }).populate(
+      "aiFeedback"
+    );
+
     res.status(200).json({
       success: true,
       message: "Interview Details fetched successfully!",

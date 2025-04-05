@@ -3,7 +3,7 @@ import React from "react";
 const DashboardLayout = ({ children }) => {
   return (
     <div>
-      <div className="mx-5 md:mx-20 lg:mx-36">{children}</div>
+      <div className="">{children}</div>
     </div>
   );
 };

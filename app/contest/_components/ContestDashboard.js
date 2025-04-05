@@ -24,22 +24,20 @@ const ContestDashBoard = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+    <div className="w-full px-6 md:px-10 lg:px-20 py-6 bg-gray-950 text-white">
       {loading ? (
-        <p className="text-lg text-gray-500 dark:text-gray-300 animate-pulse">
+        <p className="text-lg text-gray-400 animate-pulse">
           Loading contests...
         </p>
       ) : activeContest ? (
-        <div className="w-full max-w-5xl space-y-6">
+        <div className="w-full space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ContestCard data={activeContest} />
             <LeaderBoard contestId={activeContest._id} />
           </div>
         </div>
       ) : (
-        <p className="text-center text-gray-500 dark:text-gray-400">
-          No active contests available.
-        </p>
+        <p className="text-gray-500">No active contests available.</p>
       )}
     </div>
   );

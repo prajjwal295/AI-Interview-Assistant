@@ -1,37 +1,41 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import InterviewList from "./_components/InterviewList";
-import { useState } from "react";
 
 const History = () => {
   const [isActive, setIsActive] = useState(0);
+
   return (
-    <div className="relative mt-1 justify-center ml-[-23vh] w-[223.8vh] min-h-[88vh] bg-gray-950 p-10 rounded-2xl shadow-lg text-white">
-      {/* New Button Above */}
-      <div className="flex gap-1">
-        {/* New Button */}
+    <div className="w-full min-h-screen bg-gray-950 text-white px-4 py-6 sm:px-8 md:px-12 lg:px-24 xl:px-32">
+      {/* Buttons */}
+      <div className="flex w-full gap-4 flex-col sm:flex-row mb-8">
         <button
-          className="mb-8 bg-gray-700 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-600 transition duration-300 ml-10"
-          onClick={() => {
-            setIsActive(0);
-          }}
+          className={`w-full sm:w-auto py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
+            isActive === 0
+              ? "bg-white text-black"
+              : "bg-gray-700 text-white hover:bg-gray-600"
+          }`}
+          onClick={() => setIsActive(0)}
         >
           History
         </button>
 
-        {/* Completed Interviews Button (Slightly Right) */}
         <button
-          className="mb-8 bg-gray-700 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-600 transition duration-300 ml-10"
-          onClick={() => {
-            setIsActive(1);
-          }}
+          className={`w-full sm:w-auto py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
+            isActive === 1
+              ? "bg-white text-black"
+              : "bg-gray-700 text-white hover:bg-gray-600"
+          }`}
+          onClick={() => setIsActive(1)}
         >
           Completed Interviews
         </button>
       </div>
 
-      {/* Render InterviewList by default */}
-      <InterviewList isActive={isActive} />
+      {/* List Content */}
+      <div className="w-full">
+        <InterviewList isActive={isActive} />
+      </div>
     </div>
   );
 };

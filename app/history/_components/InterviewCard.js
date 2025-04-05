@@ -4,7 +4,11 @@ const InterviewCard = ({ data, isActive }) => {
   const router = useRouter();
 
   const fullDetailsClick = () => {
-    router.push(`/interview/${data.mockId}`);
+    if (isActive) {
+      router.push(`/history/${data.mockId}`);
+    } else {
+      router.push(`/dashboard/interview/${data.mockId}`);
+    }
   };
 
   return (

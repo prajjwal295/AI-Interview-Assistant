@@ -47,12 +47,10 @@ export const updateInterview = async ({ answers, id }) => {
     }
 
     data = response?.data;
-    console.log(data);
+    return data;
   } catch (error) {
     console.log("Update Interview  API ERROR............", error);
   }
-
-  return data;
 };
 
 export const updateAiResponseInterview = async ({
@@ -126,11 +124,10 @@ export const fetchInterviewById = async ({ mockId }) => {
       throw new Error(response.data.message);
     }
     data = response.data;
+    return data;
   } catch (error) {
     console.log("Get Interview  API ERROR............", error);
   }
-
-  return data;
 };
 
 export const fetchCompletedInterviewByUser = async ({ createdBy }) => {
