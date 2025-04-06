@@ -49,20 +49,20 @@ const Header = () => {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden p-2 border border-neon-blue rounded-md transition hover:bg-neon-blue/20"
+          className="md:hidden p-2  border border-neon-blue rounded-md transition hover:bg-neon-blue/20"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? (
-            <X size={22} className="text-neon-blue" />
+            <X size={22} className="text-white" />
           ) : (
-            <Menu size={22} className="text-neon-blue" />
+            <Menu size={22} className="text-white" />
           )}
         </button>
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden w-full bg-[#0f172a] border-t border-neon-blue py-4">
+        <div className="md:hidden w-full bg-[#0f172a] border-t border-neon-blue py-4 z-10">
           <ul className="flex flex-col gap-3 px-6">
             {navItems.map((item) => {
               const href = item === "home" ? "/" : `/${item}`;
