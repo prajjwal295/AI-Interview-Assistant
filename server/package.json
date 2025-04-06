@@ -12,7 +12,8 @@
     "nodemon": "^3.1.9"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "npm i"
   },
   "name": "server",
   "version": "1.0.0",
