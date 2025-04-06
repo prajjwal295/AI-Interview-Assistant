@@ -4,19 +4,30 @@ import React, { useEffect, useState } from "react";
 import ContestCard from "./ContestCard";
 import LeaderBoard from "./LeaderBoard";
 import CardSkeleton from "@/app/component/CardSkeleton";
+import { useUser } from "@clerk/nextjs";
 
 const ContestDashBoard = () => {
   const [activeContest, setActiveContest] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [enrolled, setEnrolled] = useState(false);
+  const { user } = useUser();
+  const createdBy = user?.primaryEmailAddress?.emailAddress;
 
   useEffect(() => {
     fetchContestInformation();
-  }, []);
+  }, [createdBy]);
 
   const fetchContestInformation = async () => {
     try {
       const response = await fetchActiveContest();
-      setActiveContest(response?.data || null);
+      if (response.success) {
+        setActiveContest(response?.data || null);
+        console.log(response?.data);
+
+        if (response?.data?.enrollments?.includes(createdBy)) {
+          setEnrolled(true);
+        }
+      }
     } catch (error) {
       console.error("Error fetching contest:", error);
     } finally {
@@ -31,7 +42,7 @@ const ContestDashBoard = () => {
       ) : activeContest ? (
         <div className="w-full max-w-7xl space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <ContestCard data={activeContest} />
+            <ContestCard data={activeContest} enrolled={enrolled} />
             <LeaderBoard contestId={activeContest._id} />
           </div>
         </div>

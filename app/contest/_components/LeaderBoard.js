@@ -1,9 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { fetchLeaderBoardData } from "../../../services/operations/Interview";
+import { useUser } from "@clerk/nextjs";
 
 const LeaderBoard = ({ contestId }) => {
   const [data, setData] = useState([]);
+  const user = useUser();
+  const createdBy = user?.primaryEmailAddress?.emailAddress;
+  console.log(createdBy);
 
   useEffect(() => {
     fetchLeaderBoard();
@@ -11,8 +15,11 @@ const LeaderBoard = ({ contestId }) => {
 
   const fetchLeaderBoard = async () => {
     try {
-      const response = await fetchLeaderBoardData(contestId);
-      setData(response || []);
+      const response = await fetchLeaderBoardData({ contestId });
+      console.log(response);
+      if (response.success) {
+        setData(response.data || []);
+      }
     } catch (error) {
       console.error("Error fetching leaderboard data:", error);
       setData([]);
@@ -43,10 +50,10 @@ const LeaderBoard = ({ contestId }) => {
                     {index + 1}
                   </td>
                   <td className="px-4 py-3 border-t border-gray-200">
-                    {entry.email}
+                    {entry.createdBy === createdBy ? "You" : entry.createdBy}
                   </td>
                   <td className="px-4 py-3 border-t border-gray-200 text-center">
-                    {entry.score}
+                    {entry.aiFeedback === null ? "0" : entry.score}
                   </td>
                 </tr>
               ))

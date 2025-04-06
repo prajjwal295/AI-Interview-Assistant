@@ -11,6 +11,8 @@ import {
   fetchInterviewById,
 } from "../../../../../services/operations/Interview";
 import AiFeedbackModal from "./AiFeedbackModal";
+import { useUser } from "@clerk/nextjs";
+import InterviewSkeleton from "@/app/component/InterviewSkeleton";
 
 const InterviewClient = () => {
   const router = useRouter();
@@ -20,8 +22,10 @@ const InterviewClient = () => {
   const [questions, setQuestions] = useState([]);
   const [finalTranscript, setFinalTranscript] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const [unAuth, setUnAuth] = useState(false);
   const params = useParams();
   const { id } = params;
+  const { user } = useUser();
 
   const {
     error,
@@ -37,19 +41,28 @@ const InterviewClient = () => {
   });
 
   useEffect(() => {
-    if (id) fetchInterviewDetails(id);
-  }, [id]);
+    if (id && user) fetchInterviewDetails(id, user);
+  }, [id, user]);
 
-  const fetchInterviewDetails = async (id) => {
-    const data = await fetchInterviewById({ mockId: id });
-    if (data?.data?.aiFeedback) router.push(`/history/${id}`);
-
-    const qList = data?.data?.jsonMockResp?.map((res) => res.question);
-    const aList = data?.data?.userAnswers;
-    setQuestions(qList);
-    aList?.forEach((answerSet) => {
-      dispatch(addAnswers({ index: answerSet.id, answer: answerSet.answer }));
+  const fetchInterviewDetails = async (id, user) => {
+    const data = await fetchInterviewById({
+      mockId: id,
+      createdBy: user?.primaryEmailAddress?.emailAddress,
     });
+
+    if (data && data.success) {
+      if (data?.data?.aiFeedback) return router.push(`/history/${id}`);
+
+      const qList = data?.data?.jsonMockResp?.map((res) => res.question);
+      const aList = data?.data?.userAnswers;
+      setQuestions(qList);
+
+      aList?.forEach((answerSet) => {
+        dispatch(addAnswers({ index: answerSet.id, answer: answerSet.answer }));
+      });
+    } else {
+      setUnAuth(true);
+    }
   };
 
   useEffect(() => {
@@ -89,12 +102,24 @@ const InterviewClient = () => {
         answer: value,
       }));
       const data = await updateInterview({ answers: answerArray, id });
-      console.log({ data });
-      if (data) {
-        setOpenModal(true);
-      }
+      if (data) setOpenModal(true);
     }
   };
+
+  // Case: Unauthorized access
+  if (unAuth) {
+    return (
+      <div className=" w-full h-full p-6 gap-6 bg-gray-950 text-white lg:h-[91vh]">
+        <p className="text-lg text-gray-500 italic border border-gray-700 px-6 py-4 rounded-lg mt-10 text-center">
+          Unauthorized Access
+        </p>
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return <InterviewSkeleton />;
+  }
 
   return (
     <div className="flex flex-col lg:flex-row w-full h-full p-6 gap-6 bg-gray-950 text-white lg:h-[91vh]">
@@ -110,13 +135,13 @@ const InterviewClient = () => {
                 key={index}
                 onClick={() => setIsActive(index)}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition duration-300 flex items-center gap-2
-          ${
-            isCurrent
-              ? "bg-white text-black"
-              : isAnswered
-              ? "bg-green-600 text-white"
-              : "bg-gray-800 text-white hover:bg-gray-700"
-          }`}
+                ${
+                  isCurrent
+                    ? "bg-white text-black"
+                    : isAnswered
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-800 text-white hover:bg-gray-700"
+                }`}
               >
                 {q.slice(0, 20)}...
                 {isAnswered && <span className="ml-2">✔</span>}
@@ -163,12 +188,12 @@ const InterviewClient = () => {
           <button
             onClick={isRecording ? handleStopRecording : handleStartRecording}
             className={`w-full sm:w-1/2 py-3 rounded-lg font-semibold transition duration-300
-        ${
-          isRecording
-            ? "bg-red-600 hover:bg-red-700"
-            : "bg-green-600 hover:bg-green-700"
-        }
-        text-white`}
+              ${
+                isRecording
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-green-600 hover:bg-green-700"
+              }
+              text-white`}
           >
             {isRecording ? "Stop Recording" : "Start Recording"}
           </button>

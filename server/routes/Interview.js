@@ -8,13 +8,15 @@ const {
   fetchCompltedInterviewsByUser,
   updateInterviewFeedback,
   fetchLeaderBoardData,
-  fetchInterviewDetailsById
+  fetchInterviewDetailsById,
+  deleteInteriewRecordByUser,
 } = require("../controllers/Interview");
 
 router.post("/create", createInterview);
 router.get("/all", fetchAllInterviews);
 router.get("/fetchById", fetchInterviewDetailsById);
 router.get("/user", fetchInterviewsByUser);
+router.delete("/user", deleteInteriewRecordByUser);
 router.get("/user/completed", fetchCompltedInterviewsByUser);
 router.put("/update", updateInterview);
 router.put("/updateFeedback", updateInterviewFeedback);

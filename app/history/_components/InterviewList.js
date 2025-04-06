@@ -50,7 +50,12 @@ const InterviewList = ({ isActive }) => {
       ) : interviews.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {interviews.map((d) => (
-            <InterviewCard key={d.mockId} data={d} isActive={isActive} />
+            <InterviewCard
+              key={d.mockId}
+              data={d}
+              isActive={isActive}
+              setInterviews={setInterviews}
+            />
           ))}
         </div>
       ) : (

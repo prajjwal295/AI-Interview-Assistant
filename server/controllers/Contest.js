@@ -5,7 +5,6 @@ const fetchActiveContest = async (req, res) => {
     const contest = await Contest.findOne({
       status: "active",
     });
-    console.log(contest);
     if (contest != null) {
       res.status(200).json({
         success: true,

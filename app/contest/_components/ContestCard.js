@@ -19,7 +19,7 @@ const getColorByDifficulty = (level) => {
   }
 };
 
-const ContestCard = ({ data }) => {
+const ContestCard = ({ data, enrolled }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -94,7 +94,6 @@ const ContestCard = ({ data }) => {
         </h1>
         <p className="text-sm text-gray-600">
           <span className="font-medium">Experience:</span> {data.jobExperience}{" "}
-          years
         </p>
         <span
           className={`inline-block px-3 py-1 text-xs font-semibold rounded-full w-fit ${getColorByDifficulty(
@@ -107,10 +106,14 @@ const ContestCard = ({ data }) => {
 
       <button
         onClick={onEnrollClick}
-        disabled={loading}
+        disabled={loading || enrolled}
         className="mt-6 w-full bg-gray-900 text-white font-semibold py-2 rounded-lg hover:bg-gray-700 transition duration-300"
       >
-        {loading ? "Enrolling..." : "Enroll Now"}
+        {enrolled
+          ? "Already Enrolled"
+          : loading
+          ? "Enrolling..."
+          : "Enroll Now"}
       </button>
 
       {error && (

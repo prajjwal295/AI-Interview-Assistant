@@ -9,6 +9,7 @@ const {
   FETCH_LEADERBOARD_API,
   FETCH_INTERVIEW_BYID_API,
   UPDATE_INTERVIEW_FEEDBACK_API,
+  DELETE_INTERVIEW_BYID,
 } = endpoints;
 
 export const createInterview = async (formData, token) => {
@@ -107,16 +108,16 @@ export const fetchInterviewByUser = async ({ createdBy }) => {
   return data;
 };
 
-export const fetchInterviewById = async ({ mockId }) => {
+export const fetchInterviewById = async ({ mockId, createdBy }) => {
   let data;
-  console.log(mockId);
+  console.log({ createdBy });
   try {
     const response = await apiConnector(
       "GET",
       FETCH_INTERVIEW_BYID_API,
       null,
       null,
-      { mockId }
+      { mockId, createdBy }
     );
     console.log("Get all Interview by user API Response.....", response);
 
@@ -128,6 +129,8 @@ export const fetchInterviewById = async ({ mockId }) => {
   } catch (error) {
     console.log("Get Interview  API ERROR............", error);
   }
+
+  return null;
 };
 
 export const fetchCompletedInterviewByUser = async ({ createdBy }) => {
@@ -151,6 +154,25 @@ export const fetchCompletedInterviewByUser = async ({ createdBy }) => {
   }
 
   return data;
+};
+
+export const deleteInterviewById = async ({ mockId, createdBy }) => {
+  let data;
+  try {
+    const response = await apiConnector("DELETE", DELETE_INTERVIEW_BYID, {
+      mockId,
+      createdBy,
+    });
+    console.log("Delete Interview by user API Response.....", response);
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+    data = response.data;
+    return data;
+  } catch (error) {
+    console.log("Delete Interview  API ERROR............", error);
+  }
 };
 
 export const fetchLeaderBoardData = async ({ contestId }) => {

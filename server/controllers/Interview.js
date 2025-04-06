@@ -201,25 +201,41 @@ const fetchAllInterviews = async (req, res) => {
 
 const fetchInterviewDetailsById = async (req, res) => {
   try {
-    const { mockId } = req.query;
-    if (!mockId) {
+    const { mockId, createdBy } = req.query;
+
+    if (!mockId || !createdBy) {
       return res.status(400).json({
         success: false,
-        message: "The 'mockId' parameter is required.",
+        message: "The 'mockId',createdBy parameter is required.",
       });
     }
-    const interview = await Interview.findOne({ mockId: mockId }).populate(
+
+    const interview = await Interview.findOne({ mockId }).populate(
       "aiFeedback"
     );
 
-    res.status(200).json({
+    if (!interview) {
+      return res.status(404).json({
+        success: false,
+        message: "Interview not found.",
+      });
+    }
+
+    if (interview.createdBy.toString() !== createdBy.toString()) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    return res.status(200).json({
       success: true,
-      message: "Interview Details fetched successfully!",
+      message: "Interview details fetched successfully!",
       data: interview,
     });
   } catch (error) {
-    console.error("Error fetching interviews:", error);
-    res.status(500).json({
+    console.error("Error fetching interview:", error);
+    return res.status(500).json({
       success: false,
       message: "Internal server error. Could not fetch interview.",
     });
@@ -237,7 +253,10 @@ const fetchInterviewsByUser = async (req, res) => {
       });
     }
 
-    const interviews = await Interview.find({ createdBy });
+    const interviews = await Interview.find({
+      createdBy,
+      aiFeedback: null,
+    });
 
     if (interviews.length === 0) {
       return res.status(404).json({
@@ -298,6 +317,44 @@ const fetchCompltedInterviewsByUser = async (req, res) => {
   }
 };
 
+const deleteInteriewRecordByUser = async (req, res) => {
+  try {
+    const { createdBy, mockId } = req.body;
+
+    if (!createdBy || !mockId) {
+      return res.status(400).json({
+        success: false,
+        message: "Both 'createdBy' and 'mockId' are required.",
+      });
+    }
+
+    const interview = await Interview.findOneAndDelete({ createdBy, mockId });
+
+    if (!interview) {
+      return res.status(404).json({
+        success: false,
+        message: "No interview found for the given 'createdBy' and 'mockId'.",
+      });
+    }
+    const updatedInterview = await Interview.find({
+      createdBy,
+      aiFeedback: null,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Interview deleted successfully!",
+      data: updatedInterview,
+    });
+  } catch (error) {
+    console.error("Error deleting interview:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error. Could not delete the interview.",
+    });
+  }
+};
+
 const fetchLeaderBoardData = async (req, res) => {
   try {
     const { contestId } = req.query;
@@ -308,9 +365,11 @@ const fetchLeaderBoardData = async (req, res) => {
       });
     }
 
-    const interviews = await Interview.find({ contestId }).where(
-      (x) => x.aiFeedback != null
-    );
+    const interviews = await Interview.find({
+      contestId: contestId,
+    }).populate("aiFeedback");
+
+    console.log(interviews);
 
     if (interviews.length === 0) {
       return res.status(404).json({
@@ -342,5 +401,6 @@ module.exports = {
   fetchCompltedInterviewsByUser,
   updateInterviewFeedback,
   fetchLeaderBoardData,
+  deleteInteriewRecordByUser,
   fetchInterviewDetailsById,
 };

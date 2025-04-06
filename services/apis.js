@@ -10,6 +10,7 @@ export const endpoints = {
   UPDATE_INTERVIEW_API: `http://localhost:4000/api/interviews/update`,
   UPDATE_INTERVIEW_FEEDBACK_API: `http://localhost:4000/api/interviews/updateFeedback`,
   FETCH_LEADERBOARD_API: `http://localhost:4000/api/interviews/LeaderBoardData`,
+  DELETE_INTERVIEW_BYID: `http://localhost:4000/api/interviews/user`,
 };
 
 export const contestEndpoints = {
