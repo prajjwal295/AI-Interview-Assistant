@@ -13,7 +13,10 @@ const scheduleInterviewJob = require("./cron-jobs/interviewScheduler");
 database.dbConnect();
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://form-submission-tau.vercel.app"],
+  origin: [
+    "http://localhost:3000",
+    "https://ai-interview-assistant.netlify.app",
+  ],
   credentials: true,
 };
 
