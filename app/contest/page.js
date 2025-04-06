@@ -16,7 +16,7 @@ const Contest = () => {
           }`}
           onClick={() => setIsActive(0)}
         >
-          Today's Contest
+          {"Today's Contest"}
         </button>
 
         <button
