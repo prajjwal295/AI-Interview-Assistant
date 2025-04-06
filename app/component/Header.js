@@ -62,7 +62,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden w-full bg-[#0f172a] border-t border-neon-blue py-4 z-10">
+        <div className="md:hidden w-full bg-[#0f172a] border-t border-neon-blue py-4 z-10 absolute border-white border-solid border-[1px]">
           <ul className="flex flex-col gap-3 px-6">
             {navItems.map((item) => {
               const href = item === "home" ? "/" : `/${item}`;
