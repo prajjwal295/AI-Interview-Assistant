@@ -30,7 +30,11 @@ const ContestCard = ({ data, enrolled }) => {
     setError(null);
     setLoading(true);
     try {
-      await createInterviewForContest();
+      if (enrolled) {
+        router.push(`/history/${data.mockId}`);
+      } else {
+        await createInterviewForContest();
+      }
     } catch (error) {
       setError("Failed to enroll. Please try again.");
       console.error("Enrollment Error:", error);
@@ -106,7 +110,7 @@ const ContestCard = ({ data, enrolled }) => {
 
       <button
         onClick={onEnrollClick}
-        disabled={loading || enrolled}
+        disabled={loading}
         className="mt-6 w-full bg-gray-900 text-white font-semibold py-2 rounded-lg hover:bg-gray-700 transition duration-300"
       >
         {enrolled
