@@ -29,17 +29,20 @@ const Header = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex gap-6 text-sm lg:text-base items-center">
-          {navItems.map((item) => (
-            <Link
-              key={item}
-              href={`/${item}`}
-              className={`relative px-1 text-gray-300 hover:text-neon-blue transition duration-300 tracking-wide uppercase ${
-                path === `/${item}` ? "text-neon-blue font-bold" : ""
-              }`}
-            >
-              {item.charAt(0).toUpperCase() + item.slice(1)}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const href = item === "home" ? "/" : `/${item}`;
+            return (
+              <Link
+                key={item}
+                href={href}
+                className={`relative px-1 text-gray-300 hover:text-neon-blue transition duration-300 tracking-wide uppercase ${
+                  path === `/${item}` ? "text-neon-blue font-bold" : ""
+                }`}
+              >
+                {item.charAt(0).toUpperCase() + item.slice(1)}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* User Button */}

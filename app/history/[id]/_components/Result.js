@@ -5,21 +5,30 @@ import { useEffect, useState } from "react";
 import ThingsToImprove from "./ThingsToImprove";
 import LeftResult from "./LeftResult";
 import FeedbackBox from "./FeedbackBox";
+import { useUser } from "@clerk/nextjs";
 
 const Result = () => {
   const [interviewData, setInterviewData] = useState(null);
   const params = useParams();
   const { id } = params;
+  const { user } = useUser();
 
   useEffect(() => {
     if (id) {
       fetchInterviewDetails(id);
     }
-  }, [id]);
+  }, [id, user]);
 
   const fetchInterviewDetails = async (id) => {
-    const { data } = await fetchInterviewById({ mockId: id });
-    setInterviewData(data);
+    if (id && user) {
+      const { data } = await fetchInterviewById({
+        mockId: id,
+        createdBy: user?.primaryEmailAddress?.emailAddress,
+      });
+      if (data) {
+        setInterviewData(data);
+      }
+    }
   };
 
   return (

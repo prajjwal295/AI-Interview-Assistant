@@ -110,7 +110,6 @@ export const fetchInterviewByUser = async ({ createdBy }) => {
 
 export const fetchInterviewById = async ({ mockId, createdBy }) => {
   let data;
-  console.log({ createdBy });
   try {
     const response = await apiConnector(
       "GET",
