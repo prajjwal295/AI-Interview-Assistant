@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import ContestDashBoard from "./_components/ContestDashboard";
+import PastContestPage from "./_components/PastContestPage";
 
 const Contest = () => {
   const [isActive, setIsActive] = useState(0);
@@ -31,7 +32,7 @@ const Contest = () => {
         </button>
       </div>
       <div className="w-full">
-        <ContestDashBoard />
+        {isActive == 0 ? <ContestDashBoard /> : <PastContestPage />}
       </div>
     </div>
   );

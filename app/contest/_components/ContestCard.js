@@ -7,7 +7,7 @@ import { addQuestions } from "../../store/slice/interviewSlice";
 import { useDispatch } from "react-redux";
 
 const getColorByDifficulty = (level) => {
-  switch (level.toLowerCase()) {
+  switch (level?.toLowerCase()) {
     case "easy":
       return "bg-green-600 text-white";
     case "medium":
@@ -19,7 +19,7 @@ const getColorByDifficulty = (level) => {
   }
 };
 
-const ContestCard = ({ data, enrolled }) => {
+const ContestCard = ({ data, enrolled, past }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -107,12 +107,14 @@ const ContestCard = ({ data, enrolled }) => {
           {data.difficulty}
         </span>
       </div>
-
       <button
         onClick={onEnrollClick}
         disabled={loading}
-        className="mt-6 w-full bg-gray-900 text-white font-semibold py-2 rounded-lg hover:bg-gray-700 transition duration-300"
+        className={`mt-6 w-full bg-gray-900 text-white font-semibold py-2 rounded-lg hover:bg-gray-700 transition duration-300 ${
+          past ? "hidden" : ""
+        }`}
       >
+        Enroll Now
         {enrolled
           ? "Already Enrolled"
           : loading

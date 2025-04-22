@@ -5,13 +5,30 @@ const fetchActiveContest = async (req, res) => {
     const contest = await Contest.findOne({
       status: "active",
     });
-    if (contest != null) {
-      res.status(200).json({
-        success: true,
-        message: "Contest fetched successfully!",
-        data: contest,
-      });
-    }
+    res.status(200).json({
+      success: true,
+      message: "Contest fetched successfully!",
+      data: contest,
+    });
+  } catch (error) {
+    console.error("Error fetching interviews:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error. Could not fetch interviews.",
+    });
+  }
+};
+
+const fetchPastContest = async (req, res) => {
+  try {
+    const contest = await Contest.findOne({
+      status: "ended",
+    });
+    res.status(200).json({
+      success: true,
+      message: "Contest fetched successfully!",
+      data: contest,
+    });
   } catch (error) {
     console.error("Error fetching interviews:", error);
     res.status(500).json({
@@ -23,4 +40,5 @@ const fetchActiveContest = async (req, res) => {
 
 module.exports = {
   fetchActiveContest,
+  fetchPastContest,
 };

@@ -14,4 +14,5 @@ export const endpoints = {
 
 export const contestEndpoints = {
   FETCH_ACTIVE_CONTEST: `${BASE_URL}/api/contests/active`,
+  FETCH_CLOSED_CONTEST: `${BASE_URL}/api/contests/closed`,
 };
