@@ -6,12 +6,14 @@ import {
 import { chatSession } from "../../../../../utils/GeminiAI";
 import { RatingPrompt } from "../../../../../utils/RatingPrompt";
 import React, { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 const AiFeedbackModal = ({ id, setOpenModal }) => {
   const [interview, setInterview] = useState(null);
   const [fullData, setFullData] = useState(null);
   const [finalScore, setFinalScore] = useState(null);
   const [feedbackData, setFeedbackData] = useState(null);
   const router = useRouter();
+  const { user } = useUser();
 
   useEffect(() => {
     if (id) {
@@ -20,7 +22,10 @@ const AiFeedbackModal = ({ id, setOpenModal }) => {
   }, [id]);
 
   const fetchInterviewDetails = async (id) => {
-    const data = await fetchInterviewById({ mockId: id });
+    const data = await fetchInterviewById({
+      mockId: id,
+      createdBy: user?.primaryEmailAddress?.emailAddress,
+    });
 
     if (data) {
       const questionList =
