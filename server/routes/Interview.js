@@ -4,15 +4,22 @@ const {
   createInterview,
   fetchAllInterviews,
   fetchInterviewsByUser,
+  updateInterview,
+  fetchCompltedInterviewsByUser,
+  updateInterviewFeedback,
+  fetchLeaderBoardData,
+  fetchInterviewDetailsById,
+  deleteInteriewRecordByUser,
 } = require("../controllers/Interview");
 
-// Create an interview
 router.post("/create", createInterview);
-
-// Fetch all interviews
 router.get("/all", fetchAllInterviews);
-
-// Fetch interviews by createdBy
-router.get("/user/:createdBy", fetchInterviewsByUser);
+router.get("/fetchById", fetchInterviewDetailsById);
+router.get("/user", fetchInterviewsByUser);
+router.delete("/user", deleteInteriewRecordByUser);
+router.get("/user/completed", fetchCompltedInterviewsByUser);
+router.put("/update", updateInterview);
+router.put("/updateFeedback", updateInterviewFeedback);
+router.get("/LeaderBoardData", fetchLeaderBoardData);
 
 module.exports = router;

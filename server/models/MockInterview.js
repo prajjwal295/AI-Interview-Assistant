@@ -27,10 +27,24 @@ const mockInterviewSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
+  userAnswers: {
+    type: mongoose.Schema.Types.Mixed,
+    default: [],
+  },
   mockId: {
     type: String,
     required: true,
     default: randomUUID,
+  },
+  aiFeedback: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AiResponse",
+    default: null,
+  },
+  contestId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Contest",
+    default: null,
   },
 });
 

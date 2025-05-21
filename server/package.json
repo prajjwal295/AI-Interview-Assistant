@@ -5,13 +5,15 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "mongodb": "^6.14.0",
-    "mongoose": "^8.8.2"
+    "mongoose": "^8.8.2",
+    "node-cron": "^3.0.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.9"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "npm i"
   },
   "name": "server",
   "version": "1.0.0",
